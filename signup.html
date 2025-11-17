@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f0f2f5;
+      font-family: Arial;
+    }
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(90deg, #0057D9, #FF3B3F);
+      color: white;
+      font-size: 24px;
+    }
+    .form-container {
+      max-width: 400px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #FF7A00;
+      border: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover { background: #e86b00; }
+  </style>
+</head>
+<body>
+
+<div class="header">Create Your ISP Account</div>
+
+<div class="form-container">
+  <form action="signup_process.php" method="POST">
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="email" name="email" placeholder="Email address" required>
+    <input type="text" name="names" placeholder="Full Names" required>
+    <input type="text" name="company" placeholder="Company Name" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Create Account</button>
+  </form>
+</div>
+
+</body>
+</html>

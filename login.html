@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+    margin: 0;
+    background: url('images/login-bg.jpeg') center/cover no-repeat;
+   font-family: Arial, sans-serif;
+    }
+    .overlay {
+      background: rgba(0,0,0,0.6);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-box {
+      background: white;
+      padding: 25px;
+      width: 350px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      text-align: center;
+      background: #0057D9;
+      color: white;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+    .btn:hover { background: #003c98; }
+    a { font-size: 14px; color: #FF7A00; }
+  </style>
+</head>
+<body>
+
+<div class="overlay">
+  <div class="login-box">
+    <h2 style="text-align:center;color:#FF3B3F">Login</h2>
+
+    <form action="login_process.php" method="POST">
+      <input type="email" name="email" placeholder="Email address" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button class="btn" type="submit">Login</button>
+    </form>
+    
+    <div style="text-align:center;margin-top:10px;">
+      <a href="forgot_password.html">Forgot Password?</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
