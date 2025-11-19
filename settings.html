@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-TECH Super Admin - Settings</title>
+
+<style>
+/* ===== GENERAL ===== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #0052cc;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 17px;
+}
+.sidebar a:hover {
+    background: rgba(255,255,255,0.15);
+    border-left: 4px solid #ff7f00;
+}
+
+/* ===== CONTENT ===== */
+.content {
+    margin-left: 260px;
+    padding: 25px;
+}
+
+/* ===== SETTINGS BOX ===== */
+.settings-card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    color: #0052cc;
+}
+
+/* INPUTS */
+.settings-card input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #0052cc;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.save-btn {
+    background: #ff7f00;
+    border: none;
+    padding: 12px 20px;
+    color: white;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* ===== NOTIFICATION BUTTON ===== */
+.notif-btn {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    padding: 10px 15px;
+    background: #0052cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* ===== NOTIFICATION PANEL ===== */
+.notif-panel {
+    width: 280px;
+    height: 100vh;
+    background: white;
+    position: fixed;
+    right: -300px;
+    top: 0;
+    padding: 20px;
+    box-shadow: -3px 0 10px rgba(0,0,0,0.25);
+    transition: 0.3s;
+    z-index: 1002;
+}
+
+.notif-header {
+    font-size: 20px;
+    color: #0052cc;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.notif-close {
+    font-size: 25px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.notif-close:hover { background: #eee; }
+
+.notif-item {
+    padding: 12px;
+    background: #f0f4ff;
+    border-left: 4px solid #0052cc;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    .content {
+        margin-left: 210px;
+    }
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        display: none;
+    }
+    .content {
+        margin-left: 0;
+        padding-top: 80px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar"
+    <h2>D-TECH ADMIN</h2>
+    <a href="Admin dashboard.html">Dashboard</a>
+    <a href="accounts.html">Accounts</a>
+    <a href="admin_analytics.htmls">Analytics</a>
+    <a href="notifications.html">Notifications</a>
+    <a href="settings.html" style="border-left:4px solid #ff7f00;">Settings</a>
+</div>
+
+<!-- NOTIFICATION BUTTON -->
+<button class="notif-btn" onclick="toggleNotif()">🔔</button>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notifPanel" class="notif-panel">
+    <div class="notif-header">
+        Notifications
+        <span class="notif-close" onclick="closeNotif()">×</span>
+    </div>
+
+    <div class="notif-item">System update available</div>
+    <div class="notif-item">New account registered</div>
+    <div class="notif-item">3 password resets today</div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="content">
+    <h2 style="color:#0052cc;">Settings</h2>
+
+    <!-- PROFILE SETTINGS -->
+    <div class="settings-card">
+        <h3>Profile Information</h3>
+        <input type="text" placeholder="Admin Name">
+        <input type="email" placeholder="Admin Email">
+        <button class="save-btn">Save Changes</button>
+    </div>
+
+    <!-- SYSTEM SETTINGS -->
+    <div class="settings-card">
+        <h3>System Preferences</h3>
+        <input type="text" placeholder="System Name (ex: D-TECH Portal)">
+        <input type="text" placeholder="Support Email">
+        <button class="save-btn">Update System</button>
+    </div>
+
+    <!-- PASSWORD SETTINGS -->
+    <div class="settings-card">
+        <h3>Change Password</h3>
+        <input type="password" placeholder="Current Password">
+        <input type="password" placeholder="New Password">
+        <input type="password" placeholder="Confirm New Password">
+        <button class="save-btn">Update Password</button>
+    </div>
+</div>
+
+<script>
+// NOTIFICATION PANEL FUNCTIONS
+function toggleNotif() {
+    const panel = document.getElementById("notifPanel");
+    panel.style.right = panel.style.right === "0px" ? "-300px" : "0px";
+}
+
+function closeNotif() {
+    document.getElementById("notifPanel").style.right = "-300px";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-TECH Super Admin - Analytics (Dynamic)</title>
+<style>
+/* ========== GENERAL ========== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #0052cc;
+    color: white;
+    padding-top: 30px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.sidebar .nav-item {
+    display: block;
+    padding: 14px 20px;
+    margin: 8px 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-item:hover, .sidebar .active {
+    background: #ff7f00;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* ========== MAIN CONTENT ========== */
+.content {
+    margin-left: 260px;
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+}
+
+/* ========== ANALYTICS CARDS ========== */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #0052cc;
+    font-size: 18px;
+}
+
+.card p {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0 0;
+}
+
+.card .trend {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.positive { color: #28a745; }
+.negative { color: #d9534f; }
+
+/* ========== CHART CONTAINER (Simulated) ========== */
+.chart-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.chart-container h3 {
+    color: #0052cc;
+    margin-top: 0;
+}
+
+.chart-placeholder {
+    height: 300px; /* Simulate chart area */
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 16px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-260px);
+        position: fixed;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .content {
+        margin-left: 0;
+    }
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* TOGGLE BUTTON FOR MOBILE */
+.toggle-btn {
+    display: none;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background: #0052cc;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1100;
+}
+@media screen and (max-width: 768px) {
+    .toggle-btn { display: block; }
+}
+</style>
+</head>
+<body>
+
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+
+<div class="sidebar" id="sidebar">
+    <h2>SUPER ADMIN</h2>
+    <a href="dashboard.html" class="nav-item">Dashboard</a>
+    <a href="accounts.html" class="nav-item">Accounts</a>
+    <a href="analytics.html" class="nav-item active">Analytics</a>
+    <a href="notifications.html" class="nav-item">Notifications</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+</div>
+
+<div class="content">
+    <h1 style="color:#0052cc; margin-bottom: 30px;">System Analytics Overview</h1>
+
+    <div class="analytics-grid">
+        <div class="card">
+            <h3>Total Accounts</h3>
+            <p id="totalAccounts">0</p>
+            <span id="totalAccountsTrend" class="trend positive">Fetching data...</span>
+        </div>
+        <div class="card">
+            <h3>Active Accounts</h3>
+            <p id="activeAccounts">0</p>
+            <span id="activeAccountsTrend" class="trend positive">Fetching data...</span>
+        </div>
+        <div class="card">
+            <h3>Suspended Accounts</h3>
+            <p id="suspendedAccounts">0</p>
+            <span id="suspendedAccountsTrend" class="trend negative">Fetching data...</span>
+        </div>
+        <div class="card">
+            <h3>Data Usage (TB)</h3>
+            <p id="dataUsage">0 TB</p>
+            <span id="dataUsageTrend" class="trend positive">Fetching data...</span>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>Account Growth Over Time</h3>
+        <div class="chart-placeholder">
+            [Placeholder for Line Chart showing new accounts over time]
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>Status Distribution</h3>
+        <div class="chart-placeholder">
+            [Placeholder for Pie Chart showing Active, Suspended, Inactive percentages]
+        </div>
+    </div>
+</div>
+
+<script>
+/* MOBILE SIDEBAR TOGGLE */
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+/* DYNAMIC DATA FUNCTION */
+function fetchRealTimeData() {
+    // --- Simulate API Fetch or Calculation ---
+    const data = {
+        total: 1350,
+        active: 1280,
+        suspended: 70,
+        dataUsageTB: 5.82,
+        trendTotal: "+8%",
+        trendActive: "+3%",
+        trendSuspended: "-5%",
+        trendDataUsage: "+0.37 TB"
+    };
+
+    // --- Update Metrics ---
+    document.getElementById('totalAccounts').textContent = data.total.toLocaleString();
+    document.getElementById('activeAccounts').textContent = data.active.toLocaleString();
+    document.getElementById('suspendedAccounts').textContent = data.suspended.toLocaleString();
+    document.getElementById('dataUsage').textContent = data.dataUsageTB + ' TB';
+
+    // --- Update Trends and Set Colors ---
+    const totalTrend = document.getElementById('totalAccountsTrend');
+    const activeTrend = document.getElementById('activeAccountsTrend');
+    const suspendedTrend = document.getElementById('suspendedAccountsTrend');
+    const dataUsageTrend = document.getElementById('dataUsageTrend');
+    
+    // Total Accounts Trend
+    totalTrend.textContent = data.trendTotal + ' since last month';
+    totalTrend.classList.toggle('positive', data.trendTotal.startsWith('+'));
+    totalTrend.classList.toggle('negative', data.trendTotal.startsWith('-'));
+
+    // Active Accounts Trend
+    activeTrend.textContent = data.trendActive + ' since yesterday';
+    activeTrend.classList.toggle('positive', data.trendActive.startsWith('+'));
+    activeTrend.classList.toggle('negative', data.trendActive.startsWith('-'));
+    
+    // Suspended Accounts Trend
+    suspendedTrend.textContent = data.trendSuspended + ' since last week';
+    suspendedTrend.classList.toggle('positive', data.trendSuspended.startsWith('+'));
+    suspendedTrend.classList.toggle('negative', data.trendSuspended.startsWith('-'));
+    
+    // Data Usage Trend
+    dataUsageTrend.textContent = data.trendDataUsage + ' this month';
+    dataUsageTrend.classList.toggle('positive', data.trendDataUsage.startsWith('+'));
+    dataUsageTrend.classList.toggle('negative', data.trendDataUsage.startsWith('-'));
+
+    console.log("Analytics data updated.");
+}
+
+// 1. Run the function immediately when the page loads
+fetchRealTimeData(); 
+
+// 2. Set an interval to refresh the data every 30 seconds (simulating real-time updates)
+// setInterval(fetchRealTimeData, 30000); 
+
+</script>
+
+</body>
+</html>

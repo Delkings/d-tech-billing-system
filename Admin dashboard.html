@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-TECH Super Admin Dashboard</title>
+
+<!-- CHART.JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+    }
+
+    /* ======================
+       SIDEBAR
+    ====================== */
+    .sidebar {
+        width: 240px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #0052cc;
+        color: white;
+        padding-top: 30px;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .sidebar .nav-item {
+        display: block;
+        padding: 14px 20px;
+        margin: 8px 10px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .sidebar .nav-item:hover {
+        background: #ff7f00;
+        color: white;
+        transform: translateX(5px);
+    }
+
+    /* ======================
+       MAIN CONTENT
+    ====================== */
+    .content {
+        margin-left: 260px; /* space for sidebar */
+        padding: 30px;
+    }
+
+    /* SEARCH BAR */
+    .search-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .search-input {
+        width: 300px;
+        padding: 10px;
+        border: 2px solid #0052cc;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+    .add-btn {
+        padding: 10px 18px;
+        background: #ff7f00;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    th {
+        background: #0052cc;
+        color: white;
+        padding: 12px;
+        text-align: left;
+    }
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .view-btn {
+        background: #007bff;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+    }
+
+    /* ======================
+       MODALS
+    ====================== */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+    .modal-box {
+        background: white;
+        width: 380px;
+        padding: 20px;
+        border-radius: 16px;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        color: #0052cc;
+    }
+    .close-btn {
+        cursor: pointer;
+        font-size: 24px;
+        padding: 2px 10px;
+        border-radius: 6px;
+    }
+    .close-btn:hover { background: #eee; }
+
+    .action-btn {
+        padding: 12px;
+        border-radius: 14px;
+        border: none;
+        font-size: 16px;
+        color: white;
+        width: 100%;
+        margin-top: 12px;
+        cursor: pointer;
+    }
+    .delete { background: #d9534f; }
+    .suspend { background: #ff9800; }
+    .activate { background: #28a745; }
+
+    .modal-box input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 2px solid #0052cc;
+        border-radius: 10px;
+    }
+    .submit-btn {
+        background: #0052cc;
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 15px;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    /* ======================
+       NOTIFICATIONS
+    ====================== */
+    .notif-panel {
+        width: 280px;
+        background: #ffffff;
+        height: 100vh;
+        position: fixed;
+        right: -300px;
+        top: 0;
+        padding: 20px;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+        transition: 0.3s;
+        z-index: 998;
+    }
+    .notif-header {
+        font-size: 20px;
+        color: #0052cc;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .notif-close {
+        font-size: 26px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: 0.2s;
+    }
+    .notif-close:hover { background: #f0f0f0; }
+    .notif-item {
+        background: #f0f4ff;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left: 4px solid #0052cc;
+        border-radius: 8px;
+    }
+
+    .notif-btn {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        padding: 10px 15px;
+        background: #0052cc;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        z-index: 1001;
+    }
+</style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>SUPER ADMIN</h2>
+        <a href="#" class="nav-item">🏠Dashboard</a>
+        <a href="accounts.html" class="nav-item">👦Accounts</a>
+        <a href="analytics.html" class="nav-item">📊Analytics</a>
+        <a href="notification.html" class="nav-item">📩Notifications</a>
+        <a href="settings.html" class="nav-item">🔧Settings</a>
+    </div>
+
+    <!-- NOTIFICATION BUTTON -->
+    <button class="notif-btn" onclick="toggleNotif()">🔔</button>
+
+    <!-- NOTIFICATION PANEL -->
+    <div id="notifPanel" class="notif-panel">
+        <div class="notif-header">
+            Notifications
+            <span class="notif-close" onclick="closeNotif()">×</span>
+        </div>
+        <div class="notif-item">New account created</div>
+        <div class="notif-item">Invoice overdue alert</div>
+        <div class="notif-item">Password reset requested</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search account...">
+            <button class="add-btn" onclick="openAddModal()">+ New Account</button>
+        </div>
+
+        <h2 style="color:#0052cc;">Accounts List</h2>
+        <table>
+            <tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+                <td>D-Tech ISP</td>
+                <td>isp@dtech.com</td>
+                <td>Active</td>
+                <td><button class="view-btn" onclick="openViewModal()">View</button></td>
+            </tr>
+        </table>
+
+        <h2 style="margin-top:40px; color:#0052cc;">Analytics</h2>
+        <canvas id="chart1" height="120"></canvas>
+        <br>
+        <canvas id="chart2" height="120"></canvas>
+    </div>
+
+    <!-- VIEW MODAL -->
+    <div id="viewModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>User Actions</span>
+                <span class="close-btn" onclick="closeViewModal()">×</span>
+            </div>
+            <button class="action-btn delete">Delete</button>
+            <button class="action-btn suspend">Suspend</button>
+            <button class="action-btn activate">Activate</button>
+        </div>
+    </div>
+
+    <!-- ADD ACCOUNT MODAL -->
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>Add New Account</span>
+                <span class="close-btn" onclick="closeAddModal()">×</span>
+            </div>
+            <input type="text" placeholder="ISP Name">
+            <input type="email" placeholder="ISP Email">
+            <input type="password" placeholder="Password">
+            <button class="submit-btn">Create Account</button>
+        </div>
+    </div>
+
+    <script>
+        // MODALS
+        function openViewModal() { document.getElementById('viewModal').style.display = 'flex'; }
+        function closeViewModal() { document.getElementById('viewModal').style.display = 'none'; }
+
+        function openAddModal() { document.getElementById('addModal').style.display = 'flex'; }
+        function closeAddModal() { document.getElementById('addModal').style.display = 'none'; }
+
+        // NOTIFICATIONS
+        function toggleNotif() {
+            let panel = document.getElementById("notifPanel");
+            panel.style.right = (panel.style.right === "0px") ? "-300px" : "0px";
+        }
+        function closeNotif() { document.getElementById("notifPanel").style.right = "-300px"; }
+
+        // CHARTS
+        window.onload = function() {
+            new Chart(document.getElementById('chart1'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+                    datasets: [{
+                        label: 'New ISPs Registered',
+                        data: [3,5,2,8,6,10],
+                        borderColor: '#ff7f00',
+                        borderWidth: 3
+                    }]
+                }
+            });
+
+            new Chart(document.getElementById('chart2'), {
+                type: 'bar',
+                data: {
+                    labels: ['Active','Suspended','Pending'],
+                    datasets: [{
+                        label: 'ISP Status Overview',
+                        data: [40, 5, 3],
+                        backgroundColor: ['#28a745','#ff9800','#d9534f']
+                    }]
+                }
+            });
+        };
+    </script>
+</body>
+</html>
