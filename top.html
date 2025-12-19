@@ -507,6 +507,65 @@
       font-size: 12px;
     }
 
+    /* Test status badges */
+    .test-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .test-success {
+      background: rgba(43, 214, 123, 0.15);
+      color: #2bd67b;
+      border: 1px solid rgba(43, 214, 123, 0.3);
+    }
+
+    .test-failed {
+      background: rgba(217, 83, 79, 0.15);
+      color: #d9534f;
+      border: 1px solid rgba(217, 83, 79, 0.3);
+    }
+
+    .test-running {
+      background: rgba(255, 127, 0, 0.15);
+      color: #ff7f00;
+      border: 1px solid rgba(255, 127, 0, 0.3);
+    }
+
+    .script-output {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+
+    .test-log {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .test-log:last-child {
+      border-bottom: none;
+    }
+
+    .test-log-icon {
+      width: 20px;
+      text-align: center;
+    }
+
     @media (max-width: 600px) {
       .topbar {
         flex-direction: column;
@@ -725,10 +784,10 @@
 
     <div class="nav-group">
       <div class="nav-title">Routers & Devices</div>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="#" onclick="navigate('stations')">
         <span class="icon"><i class="fa fa-wifi"></i></span> Stations
       </a>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="#" onclick="navigate('router-setup')">
         <span class="icon"><i class="fa fa-cog"></i></span> Router Setup
       </a>
     </div>
@@ -849,6 +908,19 @@
             </div>
           </div>
           <div class="muted" style="margin-top:8px">Monthly Charge: KES 0</div>
+        </div>
+
+        <!-- Router Test Status Card -->
+        <div class="card" id="routerTestStatusCard">
+          <h4>Router Test Status</h4>
+          <div class="test-status test-running" id="routerTestStatus">
+            <i class="fa fa-sync fa-spin"></i>
+            <span>Test Not Run</span>
+          </div>
+          <div class="muted" style="margin-top:8px">Last test: Not run yet</div>
+          <button class="btn btn-primary" style="margin-top:12px" onclick="runQuickRouterTest()">
+            <i class="fa fa-play"></i> Run Quick Test
+          </button>
         </div>
       </section>
 
@@ -1031,6 +1103,207 @@
         <button class="btn btn-primary" onclick="openModal('modalAddPackage')">+ New Package</button>
       </div>
       <div class="grid-4" id="packageGrid"></div>
+    </section>
+
+    <!-- STATIONS PAGE -->
+    <section id="page-stations" class="page">
+      <div class="topbar">
+        <div class="title">Wireless Stations</div>
+        <button class="btn btn-primary" onclick="scanForStations()">
+          <i class="fa fa-search"></i> Scan Stations
+        </button>
+      </div>
+      <div class="card">
+        <h4>Connected Stations</h4>
+        <div class="muted">Wireless access points and clients</div>
+        <table style="margin-top:10px">
+          <thead>
+            <tr>
+              <th>Station Name</th>
+              <th>IP Address</th>
+              <th>Signal Strength</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stationsList">
+            <tr>
+              <td>Main Router</td>
+              <td>192.168.1.1</td>
+              <td>Excellent</td>
+              <td><span class="test-status test-success">Online</span></td>
+              <td>
+                <button class="btn btn-ghost" onclick="testStation('Main Router')">Test</button>
+                <button class="btn btn-accent" onclick="configureStation('Main Router')">Configure</button>
+              </td>
+            </tr>
+            <tr>
+              <td>AP-01</td>
+              <td>192.168.1.2</td>
+              <td>Good</td>
+              <td><span class="test-status test-success">Online</span></td>
+              <td>
+                <button class="btn btn-ghost" onclick="testStation('AP-01')">Test</button>
+                <button class="btn btn-accent" onclick="configureStation('AP-01')">Configure</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROUTER SETUP PAGE -->
+    <section id="page-router-setup" class="page">
+      <div class="topbar">
+        <div class="title">Router Configuration</div>
+        <div class="top-controls">
+          <button class="btn btn-accent" onclick="runFullNetworkTest()">
+            <i class="fa fa-bolt"></i> Full Network Test
+          </button>
+          <button class="btn btn-primary" onclick="generateConfigScript()">
+            <i class="fa fa-download"></i> Generate Config
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <h4>Basic Configuration</h4>
+          <div style="margin-top:10px">
+            <label class="muted">Router Name</label>
+            <input type="text" id="routerName" placeholder="e.g. DELTECH-Main" value="DELTECH-Main">
+
+            <label class="muted" style="margin-top:10px; display:block;">SSID (Network Name)</label>
+            <input type="text" id="routerSSID" placeholder="e.g. DELTECH-WiFi" value="DELTECH-WiFi">
+
+            <label class="muted" style="margin-top:10px; display:block;">Admin Password</label>
+            <input type="password" id="routerPassword" placeholder="Enter admin password" value="admin123">
+
+            <button class="btn btn-primary" style="margin-top:15px; width:100%" onclick="applyBasicConfig()">
+              Apply Configuration
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Network Settings</h4>
+          <div style="margin-top:10px">
+            <label class="muted">LAN IP Address</label>
+            <input type="text" id="lanIP" placeholder="192.168.1.1" value="192.168.1.1">
+
+            <label class="muted" style="margin-top:10px; display:block;">Subnet Mask</label>
+            <input type="text" id="subnetMask" placeholder="255.255.255.0" value="255.255.255.0">
+
+            <label class="muted" style="margin-top:10px; display:block;">DHCP Range Start</label>
+            <input type="text" id="dhcpStart" placeholder="192.168.1.100" value="192.168.1.100">
+
+            <label class="muted" style="margin-top:10px; display:block;">DHCP Range End</label>
+            <input type="text" id="dhcpEnd" placeholder="192.168.1.200" value="192.168.1.200">
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Wireless Settings</h4>
+          <div style="margin-top:10px">
+            <label class="muted">Wireless Mode</label>
+            <select id="wirelessMode">
+              <option value="ap">Access Point</option>
+              <option value="router" selected>Router</option>
+              <option value="repeater">Repeater</option>
+              <option value="bridge">Bridge</option>
+            </select>
+
+            <label class="muted" style="margin-top:10px; display:block;">Channel</label>
+            <select id="wirelessChannel">
+              <option value="1">Channel 1 (2.412 GHz)</option>
+              <option value="6" selected>Channel 6 (2.437 GHz)</option>
+              <option value="11">Channel 11 (2.462 GHz)</option>
+              <option value="auto">Auto Select</option>
+            </select>
+
+            <label class="muted" style="margin-top:10px; display:block;">Bandwidth</label>
+            <select id="wirelessBandwidth">
+              <option value="20">20 MHz</option>
+              <option value="40" selected>40 MHz</option>
+              <option value="80">80 MHz (5GHz only)</option>
+            </select>
+
+            <label class="muted" style="margin-top:10px; display:block;">Transmit Power</label>
+            <select id="transmitPower">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="max">Maximum</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Security Settings</h4>
+          <div style="margin-top:10px">
+            <label class="muted">Encryption</label>
+            <select id="encryptionType">
+              <option value="wpa2">WPA2-Personal</option>
+              <option value="wpa3" selected>WPA3-Personal</option>
+              <option value="wpa2wpa3">WPA2/WPA3 Mixed</option>
+              <option value="wpa2_enterprise">WPA2-Enterprise</option>
+            </select>
+
+            <label class="muted" style="margin-top:10px; display:block;">WiFi Password</label>
+            <input type="password" id="wifiPassword" placeholder="Enter WiFi password" value="DELTECH@2024">
+
+            <label class="muted" style="margin-top:10px; display:block;">Isolation Mode</label>
+            <select id="clientIsolation">
+              <option value="disabled" selected>Disabled (Clients can communicate)</option>
+              <option value="enabled">Enabled (Client Isolation)</option>
+            </select>
+
+            <label class="muted" style="margin-top:10px; display:block;">MAC Filtering</label>
+            <select id="macFiltering">
+              <option value="disabled" selected>Disabled</option>
+              <option value="whitelist">Whitelist Only</option>
+              <option value="blacklist">Blacklist Blocked</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card full-width" style="margin-top:20px">
+        <h4>Configuration Test & Script Generator</h4>
+        <div class="muted">Test your configuration and generate deployment scripts</div>
+
+        <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap">
+          <button class="btn btn-accent" onclick="testConfiguration()">
+            <i class="fa fa-vial"></i> Test Configuration
+          </button>
+          <button class="btn btn-primary" onclick="generateConfigScript()">
+            <i class="fa fa-code"></i> Generate Configuration Script
+          </button>
+          <button class="btn btn-danger" onclick="resetToDefaults()">
+            <i class="fa fa-undo"></i> Reset to Defaults
+          </button>
+        </div>
+
+        <div id="testOutput" class="script-output" style="display:none; margin-top:15px">
+          <!-- Test output will appear here -->
+        </div>
+
+        <div id="configScriptOutput" class="script-output" style="display:none; margin-top:15px">
+          <!-- Config script will appear here -->
+        </div>
+      </div>
+
+      <div class="card full-width" style="margin-top:20px">
+        <h4>Recent Configuration Tests</h4>
+        <div class="muted">History of configuration tests and results</div>
+
+        <div id="testLogs" style="margin-top:10px">
+          <div class="test-log">
+            <div class="test-log-icon"><i class="fa fa-info-circle" style="color:var(--blue)"></i></div>
+            <div>No tests run yet. Click "Test Configuration" to start.</div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -1253,6 +1526,10 @@
       }
     ];
 
+    // Router test logs
+    let routerTestLogs = [];
+    let lastRouterTestStatus = "not_run"; // "success", "failed", "running", "not_run"
+
     // Bank data
     const bankData = {
       "KCB Bank": "522522",
@@ -1350,6 +1627,7 @@
         if (pageId === 'packages') renderPackages();
         if (pageId === 'wallets') renderWallets();
         if (pageId === 'transactions') renderMpesaTable();
+        if (pageId === 'router-setup') loadRouterTestLogs();
       }
 
       closeSidebar(); // auto close on mobile
@@ -1669,6 +1947,474 @@
       }
     }
 
+    // ================= ROUTER SETUP FUNCTIONALITY =================
+
+    // Update router test status on dashboard
+    function updateRouterTestStatus(status, message = "") {
+      const statusElement = document.getElementById('routerTestStatus');
+      const statusCard = document.getElementById('routerTestStatusCard');
+
+      if (!statusElement) return;
+
+      // Remove all status classes
+      statusElement.className = 'test-status';
+
+      // Add appropriate class
+      if (status === 'success') {
+        statusElement.classList.add('test-success');
+        statusElement.innerHTML = '<i class="fa fa-check-circle"></i><span>Test Successful</span>';
+        lastRouterTestStatus = "success";
+      } else if (status === 'failed') {
+        statusElement.classList.add('test-failed');
+        statusElement.innerHTML = '<i class="fa fa-times-circle"></i><span>Test Failed</span>';
+        lastRouterTestStatus = "failed";
+      } else if (status === 'running') {
+        statusElement.classList.add('test-running');
+        statusElement.innerHTML = '<i class="fa fa-sync fa-spin"></i><span>Test Running...</span>';
+        lastRouterTestStatus = "running";
+      } else {
+        statusElement.classList.add('test-running');
+        statusElement.innerHTML = '<i class="fa fa-sync"></i><span>Test Not Run</span>';
+        lastRouterTestStatus = "not_run";
+      }
+
+      // Update last test time
+      if (status !== 'running') {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateString = now.toLocaleDateString();
+        const lastTestElement = statusCard.querySelector('.muted');
+        if (lastTestElement) {
+          lastTestElement.textContent = `Last test: ${dateString} ${timeString} ${message ? '- ' + message : ''}`;
+        }
+      }
+    }
+
+    // Quick router test from dashboard
+    function runQuickRouterTest() {
+      updateRouterTestStatus('running');
+
+      // Simulate network test with timeout
+      setTimeout(() => {
+        const tests = [
+          { name: "Ping Gateway", result: Math.random() > 0.2 },
+          { name: "DNS Resolution", result: Math.random() > 0.1 },
+          { name: "Internet Connectivity", result: Math.random() > 0.15 },
+          { name: "Local Network", result: Math.random() > 0.05 }
+        ];
+
+        const failedTests = tests.filter(test => !test.result);
+
+        if (failedTests.length === 0) {
+          updateRouterTestStatus('success', 'All tests passed');
+          addTestLog('Quick Network Test', 'success', 'All connectivity tests passed successfully');
+        } else {
+          updateRouterTestStatus('failed', `${failedTests.length} test(s) failed`);
+          addTestLog('Quick Network Test', 'failed', `${failedTests.length} test(s) failed`);
+        }
+      }, 2000);
+    }
+
+    // Full network test from router setup page
+    function runFullNetworkTest() {
+      const testOutput = document.getElementById('testOutput');
+      testOutput.style.display = 'block';
+      testOutput.innerHTML = '<div class="test-log"><i class="fa fa-sync fa-spin" style="color:var(--orange)"></i> Starting comprehensive network test...</div>';
+
+      // Simulate comprehensive network test
+      const testSteps = [
+        { delay: 500, message: "Checking router connectivity...", success: true },
+        { delay: 1000, message: "Testing gateway ping (192.168.1.1)...", success: Math.random() > 0.1 },
+        { delay: 1500, message: "Testing DNS resolution (google.com)...", success: Math.random() > 0.05 },
+        { delay: 2000, message: "Testing internet connectivity...", success: Math.random() > 0.1 },
+        { delay: 2500, message: "Checking local network devices...", success: Math.random() > 0.05 },
+        { delay: 3000, message: "Testing wireless signal strength...", success: Math.random() > 0.15 },
+        { delay: 3500, message: "Verifying firewall rules...", success: Math.random() > 0.05 },
+        { delay: 4000, message: "Testing bandwidth speed...", success: Math.random() > 0.2 }
+      ];
+
+      let completedTests = 0;
+      let successfulTests = 0;
+
+      testSteps.forEach((step, index) => {
+        setTimeout(() => {
+          const icon = step.success ? '<i class="fa fa-check" style="color:var(--green)"></i>' : '<i class="fa fa-times" style="color:var(--red)"></i>';
+          const log = document.createElement('div');
+          log.className = 'test-log';
+          log.innerHTML = `${icon} ${step.message} ${step.success ? '✓' : '✗'}`;
+          testOutput.appendChild(log);
+
+          completedTests++;
+          if (step.success) successfulTests++;
+
+          // Scroll to bottom
+          testOutput.scrollTop = testOutput.scrollHeight;
+
+          // Final summary
+          if (completedTests === testSteps.length) {
+            setTimeout(() => {
+              const summary = document.createElement('div');
+              summary.className = 'test-log';
+              summary.innerHTML = `<i class="fa fa-clipboard-check" style="color:var(--blue)"></i> Test Complete: ${successfulTests}/${testSteps.length} tests passed`;
+              testOutput.appendChild(summary);
+
+              // Update dashboard status
+              if (successfulTests === testSteps.length) {
+                updateRouterTestStatus('success', 'All tests passed');
+                addTestLog('Full Network Test', 'success', 'All tests passed successfully');
+              } else {
+                updateRouterTestStatus('failed', `${testSteps.length - successfulTests} test(s) failed`);
+                addTestLog('Full Network Test', 'failed', `${testSteps.length - successfulTests} test(s) failed`);
+              }
+            }, 500);
+          }
+        }, step.delay);
+      });
+    }
+
+    // Test specific station
+    function testStation(stationName) {
+      alert(`Testing station: ${stationName}\nThis would run actual connectivity tests in a real system.`);
+      addTestLog(`Station Test: ${stationName}`, 'success', 'Station connectivity verified');
+    }
+
+    // Configure station
+    function configureStation(stationName) {
+      alert(`Configuring station: ${stationName}\nOpening configuration interface...`);
+    }
+
+    // Scan for stations
+    function scanForStations() {
+      const stationsList = document.getElementById('stationsList');
+      if (!stationsList) return;
+
+      // Add loading indicator
+      const loadingRow = document.createElement('tr');
+      loadingRow.innerHTML = `<td colspan="5" style="text-align:center"><i class="fa fa-sync fa-spin"></i> Scanning for wireless stations...</td>`;
+      stationsList.appendChild(loadingRow);
+
+      // Simulate scan
+      setTimeout(() => {
+        stationsList.removeChild(loadingRow);
+
+        // Add simulated stations
+        const newStations = [
+          { name: 'AP-02', ip: '192.168.1.3', signal: 'Good', status: 'success' },
+          { name: 'AP-03', ip: '192.168.1.4', signal: 'Fair', status: 'success' },
+          { name: 'Client-01', ip: '192.168.1.101', signal: 'Excellent', status: 'success' }
+        ];
+
+        newStations.forEach(station => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${station.name}</td>
+            <td>${station.ip}</td>
+            <td>${station.signal}</td>
+            <td><span class="test-status test-${station.status}">Online</span></td>
+            <td>
+              <button class="btn btn-ghost" onclick="testStation('${station.name}')">Test</button>
+              <button class="btn btn-accent" onclick="configureStation('${station.name}')">Configure</button>
+            </td>
+          `;
+          stationsList.appendChild(row);
+        });
+
+        addTestLog('Station Scan', 'success', `Found ${newStations.length} new stations`);
+      }, 3000);
+    }
+
+    // Apply basic configuration
+    function applyBasicConfig() {
+      const routerName = document.getElementById('routerName').value;
+      const routerSSID = document.getElementById('routerSSID').value;
+
+      if (!routerName || !routerSSID) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      alert(`Configuration applied:\nRouter Name: ${routerName}\nSSID: ${routerSSID}\n\nChanges will take effect after reboot.`);
+      addTestLog('Basic Configuration', 'success', `Applied config: ${routerName} (${routerSSID})`);
+    }
+
+    // Test configuration
+    function testConfiguration() {
+      const testOutput = document.getElementById('testOutput');
+      const configScriptOutput = document.getElementById('configScriptOutput');
+
+      // Hide script output, show test output
+      configScriptOutput.style.display = 'none';
+      testOutput.style.display = 'block';
+      testOutput.innerHTML = '<div class="test-log"><i class="fa fa-sync fa-spin" style="color:var(--orange)"></i> Validating configuration...</div>';
+
+      // Get configuration values
+      const config = {
+        routerName: document.getElementById('routerName').value,
+        ssid: document.getElementById('routerSSID').value,
+        lanIP: document.getElementById('lanIP').value,
+        wirelessMode: document.getElementById('wirelessMode').value,
+        encryption: document.getElementById('encryptionType').value
+      };
+
+      // Simulate validation
+      setTimeout(() => {
+        testOutput.innerHTML = '';
+
+        const validations = [
+          { test: 'Router Name', valid: config.routerName.length > 0, message: 'Router name is required' },
+          { test: 'SSID', valid: config.ssid.length > 0, message: 'SSID is required' },
+          { test: 'LAN IP Format', valid: isValidIP(config.lanIP), message: 'Invalid IP address format' },
+          { test: 'Wireless Mode', valid: true, message: 'Mode selected' },
+          { test: 'Encryption', valid: config.encryption !== '', message: 'Encryption selected' }
+        ];
+
+        let allValid = true;
+
+        validations.forEach(validation => {
+          const log = document.createElement('div');
+          log.className = 'test-log';
+          const icon = validation.valid ? '<i class="fa fa-check" style="color:var(--green)"></i>' : '<i class="fa fa-times" style="color:var(--red)"></i>';
+          log.innerHTML = `${icon} ${validation.test}: ${validation.message}`;
+          testOutput.appendChild(log);
+
+          if (!validation.valid) allValid = false;
+        });
+
+        // Summary
+        setTimeout(() => {
+          const summary = document.createElement('div');
+          summary.className = 'test-log';
+
+          if (allValid) {
+            summary.innerHTML = `<i class="fa fa-clipboard-check" style="color:var(--green)"></i> Configuration is valid and ready to deploy!`;
+            addTestLog('Configuration Validation', 'success', 'All configuration checks passed');
+          } else {
+            summary.innerHTML = `<i class="fa fa-exclamation-triangle" style="color:var(--orange)"></i> Configuration has ${validations.filter(v => !v.valid).length} issue(s) that need attention`;
+            addTestLog('Configuration Validation', 'failed', 'Configuration validation failed');
+          }
+
+          testOutput.appendChild(summary);
+          testOutput.scrollTop = testOutput.scrollHeight;
+        }, 500);
+      }, 1500);
+    }
+
+    // Generate configuration script
+    function generateConfigScript() {
+      const testOutput = document.getElementById('testOutput');
+      const configScriptOutput = document.getElementById('configScriptOutput');
+
+      // Hide test output, show script output
+      testOutput.style.display = 'none';
+      configScriptOutput.style.display = 'block';
+
+      // Get all configuration values
+      const config = {
+        routerName: document.getElementById('routerName').value || 'DELTECH-Router',
+        ssid: document.getElementById('routerSSID').value || 'DELTECH-WiFi',
+        adminPassword: document.getElementById('routerPassword').value || 'admin123',
+        lanIP: document.getElementById('lanIP').value || '192.168.1.1',
+        subnetMask: document.getElementById('subnetMask').value || '255.255.255.0',
+        dhcpStart: document.getElementById('dhcpStart').value || '192.168.1.100',
+        dhcpEnd: document.getElementById('dhcpEnd').value || '192.168.1.200',
+        wirelessMode: document.getElementById('wirelessMode').value || 'router',
+        channel: document.getElementById('wirelessChannel').value || '6',
+        bandwidth: document.getElementById('wirelessBandwidth').value || '40',
+        txPower: document.getElementById('transmitPower').value || 'medium',
+        encryption: document.getElementById('encryptionType').value || 'wpa3',
+        wifiPassword: document.getElementById('wifiPassword').value || 'DELTECH@2024',
+        isolation: document.getElementById('clientIsolation').value || 'disabled',
+        macFiltering: document.getElementById('macFiltering').value || 'disabled'
+      };
+
+      // Generate script
+      const script = `#!/bin/bash
+# DELTECH Router Configuration Script
+# Generated: ${new Date().toLocaleString()}
+# Router: ${config.routerName}
+
+echo "Starting router configuration..."
+
+# Basic system configuration
+uci set system.@system[0].hostname='${config.routerName}'
+uci commit system
+
+# Network configuration
+uci set network.lan.ipaddr='${config.lanIP}'
+uci set network.lan.netmask='${config.subnetMask}'
+
+# DHCP configuration
+uci set dhcp.lan.start='${parseInt(config.dhcpStart.split('.')[3])}'
+uci set dhcp.lan.limit='${parseInt(config.dhcpEnd.split('.')[3]) - parseInt(config.dhcpStart.split('.')[3]) + 1}'
+
+# Wireless configuration
+uci set wireless.radio0.channel='${config.channel}'
+uci set wireless.radio0.htmode='HT${config.bandwidth}'
+uci set wireless.radio0.txpower='${getTxPowerValue(config.txPower)}'
+
+uci set wireless.default_radio0.ssid='${config.ssid}'
+uci set wireless.default_radio0.encryption='${getEncryptionValue(config.encryption)}'
+uci set wireless.default_radio0.key='${config.wifiPassword}'
+
+# Firewall configuration
+uci set firewall.@zone[0].input='ACCEPT'
+uci set firewall.@zone[0].output='ACCEPT'
+uci set firewall.@zone[0].forward='ACCEPT'
+
+# Client isolation
+if [ "${config.isolation}" = "enabled" ]; then
+    uci set wireless.default_radio0.isolate='1'
+else
+    uci set wireless.default_radio0.isolate='0'
+fi
+
+# Commit all changes
+uci commit
+
+echo "Configuration applied successfully!"
+echo "Router will reboot in 10 seconds..."
+sleep 10
+reboot
+
+# Test script - verifies configuration
+echo "Running post-configuration tests..."
+ping -c 3 ${config.lanIP} && echo "Gateway test: PASSED" || echo "Gateway test: FAILED"
+nslookup google.com && echo "DNS test: PASSED" || echo "DNS test: FAILED"
+ping -c 3 8.8.8.8 && echo "Internet test: PASSED" || echo "Internet test: FAILED"
+
+echo "Configuration complete!";
+`;
+
+      configScriptOutput.textContent = script;
+      configScriptOutput.scrollTop = 0;
+
+      addTestLog('Script Generation', 'success', 'Configuration script generated successfully');
+    }
+
+    // Helper functions
+    function isValidIP(ip) {
+      const pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      if (!pattern.test(ip)) return false;
+
+      const parts = ip.split('.');
+      return parts.every(part => {
+        const num = parseInt(part, 10);
+        return num >= 0 && num <= 255;
+      });
+    }
+
+    function getTxPowerValue(power) {
+      const mapping = {
+        'low': '10',
+        'medium': '15',
+        'high': '20',
+        'max': '23'
+      };
+      return mapping[power] || '15';
+    }
+
+    function getEncryptionValue(encryption) {
+      const mapping = {
+        'wpa2': 'psk2',
+        'wpa3': 'sae',
+        'wpa2wpa3': 'psk2+sae',
+        'wpa2_enterprise': 'wpa2'
+      };
+      return mapping[encryption] || 'sae';
+    }
+
+    // Reset to defaults
+    function resetToDefaults() {
+      if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        document.getElementById('routerName').value = 'DELTECH-Main';
+        document.getElementById('routerSSID').value = 'DELTECH-WiFi';
+        document.getElementById('routerPassword').value = 'admin123';
+        document.getElementById('lanIP').value = '192.168.1.1';
+        document.getElementById('subnetMask').value = '255.255.255.0';
+        document.getElementById('dhcpStart').value = '192.168.1.100';
+        document.getElementById('dhcpEnd').value = '192.168.1.200';
+        document.getElementById('wirelessMode').value = 'router';
+        document.getElementById('wirelessChannel').value = '6';
+        document.getElementById('wirelessBandwidth').value = '40';
+        document.getElementById('transmitPower').value = 'medium';
+        document.getElementById('encryptionType').value = 'wpa3';
+        document.getElementById('wifiPassword').value = 'DELTECH@2024';
+        document.getElementById('clientIsolation').value = 'disabled';
+        document.getElementById('macFiltering').value = 'disabled';
+
+        addTestLog('Reset Configuration', 'success', 'All settings reset to defaults');
+      }
+    }
+
+    // Add test log
+    function addTestLog(testName, status, message) {
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const log = {
+        id: Date.now(),
+        name: testName,
+        status: status,
+        message: message,
+        timestamp: timestamp
+      };
+
+      routerTestLogs.unshift(log); // Add to beginning
+
+      // Keep only last 10 logs
+      if (routerTestLogs.length > 10) {
+        routerTestLogs = routerTestLogs.slice(0, 10);
+      }
+
+      // Save to localStorage
+      localStorage.setItem('routerTestLogs', JSON.stringify(routerTestLogs));
+
+      // Update UI if on router setup page
+      if (document.getElementById('page-router-setup').classList.contains('active')) {
+        loadRouterTestLogs();
+      }
+    }
+
+    // Load test logs
+    function loadRouterTestLogs() {
+      // Load from localStorage
+      const savedLogs = localStorage.getItem('routerTestLogs');
+      if (savedLogs) {
+        routerTestLogs = JSON.parse(savedLogs);
+      }
+
+      const testLogsContainer = document.getElementById('testLogs');
+      if (!testLogsContainer) return;
+
+      testLogsContainer.innerHTML = '';
+
+      if (routerTestLogs.length === 0) {
+        testLogsContainer.innerHTML = '<div class="test-log"><i class="fa fa-info-circle" style="color:var(--blue)"></i><div>No tests run yet. Click "Test Configuration" to start.</div></div>';
+        return;
+      }
+
+      routerTestLogs.forEach(log => {
+        const logElement = document.createElement('div');
+        logElement.className = 'test-log';
+
+        let icon = '<i class="fa fa-info-circle" style="color:var(--blue)"></i>';
+        if (log.status === 'success') {
+          icon = '<i class="fa fa-check-circle" style="color:var(--green)"></i>';
+        } else if (log.status === 'failed') {
+          icon = '<i class="fa fa-times-circle" style="color:var(--red)"></i>';
+        }
+
+        logElement.innerHTML = `
+          <div class="test-log-icon">${icon}</div>
+          <div style="flex:1">
+            <div style="font-weight:600">${log.name}</div>
+            <div style="font-size:11px; opacity:0.8">${log.message}</div>
+          </div>
+          <div style="font-size:11px; opacity:0.7">${log.timestamp}</div>
+        `;
+
+        testLogsContainer.appendChild(logElement);
+      });
+    }
+
     // ================= PPPoE FUNCTIONS =================
     function addPppoeUser() {
       const name = document.getElementById('newPppUser').value.trim();
@@ -1847,8 +2593,9 @@
       renderWallets();
       renderPackages();
       renderMpesaTable();
+      loadRouterTestLogs();
 
-      // Check if we need to show packages page by default
+      // Check if we need to show a specific page by default
       const urlParams = new URLSearchParams(window.location.search);
       const page = urlParams.get('page');
       if (page) {

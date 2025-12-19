@@ -1,0 +1,71 @@
+// For production M-Pesa STK Push (uncomment when ready)
+/*
+async function initiateSTKPush(phone, amount) {
+try {
+const response = await fetch(`${SERVER_URL}/api/deposit`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+phone: phone,
+amount: amount
+})
+});
+
+const data = await response.json();
+
+if (data.success) {
+showStatus('info', 'Enter your M-Pesa PIN on your phone to complete payment');
+currentCheckoutID = data.checkoutRequestID;
+
+// Start polling for payment status
+startPaymentPolling(data.checkoutRequestID);
+} else {
+showStatus('error', data.message || 'Failed to initiate payment');
+}
+} catch (error) {
+console.error('STK Push error:', error);
+showStatus('error', 'Failed to initiate payment');
+}
+}
+
+function startPaymentPolling(checkoutID) {
+paymentPollInterval = setInterval(async () => {
+try {
+const response = await fetch(`${SERVER_URL}/api/check-payment`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+checkoutRequestID: checkoutID
+})
+});
+
+const data = await response.json();
+
+if (data.status === 'completed') {
+clearInterval(paymentPollInterval);
+showStatus('success', 'Payment completed successfully!');
+loadWalletBalance();
+loadTransactions();
+loadStatistics();
+} else if (data.status === 'cancelled' || data.status === 'failed') {
+clearInterval(paymentPollInterval);
+showStatus('error', `Payment ${data.status}: ${data.resultDesc}`);
+}
+} catch (error) {
+console.error('Polling error:', error);
+}
+}, 3000); // Poll every 3 seconds
+
+// Stop polling after 2 minutes
+setTimeout(() => {
+if (paymentPollInterval) {
+clearInterval(paymentPollInterval);
+showStatus('warning', 'Payment timeout. Please try again.');
+}
+}, 120000);
+}
+*/

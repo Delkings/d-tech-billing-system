@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELTECH ISP - Payment Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0052cc;
+            --orange: #ff7f00;
+            --red: #d9534f;
+            --bg: #071026;
+            --card: #0f1724;
+            --green: #2bd67b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: var(--bg);
+            color: #eaf2ff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            color: var(--blue);
+            font-size: 28px;
+        }
+
+        .wallet-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .wallet-display i {
+            color: var(--green);
+        }
+
+        .wallet-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--orange);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: var(--blue);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bcd2ff;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #eaf2ff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+        }
+
+        .amount-input {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .amount-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #9fb7d6;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0041a8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #042316;
+        }
+
+        .btn-success:hover {
+            background: #24c46d;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(43, 214, 123, 0.1);
+            border: 1px solid rgba(43, 214, 123, 0.3);
+            color: #2bd67b;
+        }
+
+        .status-error {
+            background: rgba(217, 83, 79, 0.1);
+            border: 1px solid rgba(217, 83, 79, 0.3);
+            color: #d9534f;
+        }
+
+        .status-info {
+            background: rgba(0, 82, 204, 0.1);
+            border: 1px solid rgba(0, 82, 204, 0.3);
+            color: #0052cc;
+        }
+
+        .status-warning {
+            background: rgba(255, 127, 0, 0.1);
+            border: 1px solid rgba(255, 127, 0, 0.3);
+            color: #ff7f00;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .transactions-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #bcd2ff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .transactions-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .amount-positive {
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        .timestamp {
+            color: #9fb7d6;
+            font-size: 12px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .payment-method {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-method.active {
+            border-color: var(--blue);
+            background: rgba(0, 82, 204, 0.1);
+        }
+
+        .payment-method i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--blue);
+        }
+
+        .payment-method span {
+            display: block;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: var(--blue);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #9fb7d6;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quick-amount {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-amount:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--blue);
+        }
+
+        .quick-amount.active {
+            background: rgba(0, 82, 204, 0.2);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 82, 204, 0.1), rgba(255, 127, 0, 0.05));
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--orange);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #9fb7d6;
+            font-size: 14px;
+        }
+
+        .tab-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #9fb7d6;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--blue);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--blue);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-wifi"></i> DELTECH ISP - Payment Dashboard</h1>
+            <div class="wallet-display">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet Balance:</span>
+                <span class="wallet-amount" id="walletBalance">KES 0</span>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Left Column: Payment Form -->
+            <div class="card">
+                <h2><i class="fas fa-money-bill-wave"></i> Make Deposit</h2>
+
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="mpesa">
+                        <i class="fab fa-mpesa"></i>
+                        <span>M-Pesa</span>
+                    </div>
+                    <div class="payment-method" data-method="bank">
+                        <i class="fas fa-university"></i>
+                        <span>Bank Transfer</span>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Card</span>
+                    </div>
+                </div>
+
+                <!-- M-Pesa Payment Form -->
+                <div id="mpesaForm">
+                    <div class="form-group">
+                        <label for="phoneNumber"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="phoneNumber" class="form-control" placeholder="0712 345 678"
+                            value="254708374149"> <!-- Test number for sandbox -->
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount"><i class="fas fa-money-bill-alt"></i> Amount (KES)</label>
+                        <input type="number" id="amount" class="form-control amount-input" placeholder="0" min="2"
+                            max="70000" step="1" value="100">
+                        <div class="amount-info">
+                            <span>Min: KES 2</span>
+                            <span>Max: KES 70,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Amount Buttons -->
+                    <div class="quick-amounts">
+                        <div class="quick-amount" data-amount="50">KES 50</div>
+                        <div class="quick-amount" data-amount="100">KES 100</div>
+                        <div class="quick-amount" data-amount="500">KES 500</div>
+                        <div class="quick-amount" data-amount="1000">KES 1,000</div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" onclick="initiateDeposit()" id="depositBtn">
+                        <i class="fas fa-paper-plane"></i> Deposit Now
+                    </button>
+
+                    <!-- Status Messages -->
+                    <div id="depositStatus" class="status-message"></div>
+                </div>
+
+                <!-- Bank Transfer Form (Hidden by default) -->
+                <div id="bankForm" style="display: none;">
+                    <div class="form-group">
+                        <label><i class="fas fa-university"></i> Bank Details</label>
+                        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                            <p><strong>Bank:</strong> KCB Bank</p>
+                            <p><strong>Account Name:</strong> DELTECH NETWORKS LTD</p>
+                            <p><strong>Account Number:</strong> 1234567890</p>
+                            <p><strong>Branch:</strong> Nairobi Main</p>
+                            <p><strong>Swift Code:</strong> KCBLKENX</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block"
+                        onclick="alert('Please transfer to the bank account above and upload receipt')">
+                        <i class="fas fa-upload"></i> Upload Receipt
+                    </button>
+                </div>
+
+                <!-- Card Payment Form (Hidden by default) -->
+                <div id="cardForm" style="display: none;">
+                    <div class="form-group">
+                        <label><i class="fas fa-credit-card"></i> Card Payment</label>
+                        <p style="color: #9fb7d6; margin-bottom: 15px;">
+                            Card payments are processed securely via our payment gateway.
+                        </p>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="openCardModal()">
+                        <i class="fas fa-lock"></i> Pay with Card
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: Statistics & Transactions -->
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> Transaction Statistics</h2>
+
+                <div class="stat-card">
+                    <div class="stat-value" id="todayTotal">KES 0</div>
+                    <div class="stat-label">Today's Deposits</div>
+                </div>
+
+                <div style="margin: 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 14px; color: #9fb7d6;">This Month</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--green);" id="monthTotal">KES 0
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 14px; color: #9fb7d6;">Total Transactions</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--blue);" id="totalTransactions">0
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs for Recent Transactions -->
+                <div class="tab-container">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('recent')">Recent</button>
+                        <button class="tab" onclick="switchTab('all')">All Transactions</button>
+                    </div>
+
+                    <div id="recentTab" class="tab-content active">
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactions">
+                                <!-- Recent transactions will be loaded here -->
+                                <tr>
+                                    <td colspan="3" style="text-align: center; padding: 20px; color: #9fb7d6;">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading transactions...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="allTab" class="tab-content">
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="searchTransactions" class="form-control"
+                                placeholder="Search by phone or receipt..." onkeyup="filterTransactions()">
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table class="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Phone</th>
+                                        <th>Amount</th>
+                                        <th>Receipt</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allTransactions">
+                                    <!-- All transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Deposit Modal -->
+        <div class="modal" id="testDepositModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-flask"></i> Test Deposit</h3>
+                    <button class="close-modal" onclick="closeModal('testDepositModal')">&times;</button>
+                </div>
+                <p style="margin-bottom: 20px; color: #9fb7d6;">
+                    This creates a test transaction without requiring M-Pesa credentials.
+                </p>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="testPhone" class="form-control" placeholder="0712 345 678"
+                        value="254712345678">
+                </div>
+                <div class="form-group">
+                    <label>Amount (KES)</label>
+                    <input type="number" id="testAmount" class="form-control" value="100" min="2">
+                </div>
+                <button class="btn btn-success btn-block" onclick="createTestDeposit()">
+                    <i class="fas fa-check"></i> Create Test Transaction
+                </button>
+            </div>
+        </div>
+
+        <!-- Card Payment Modal -->
+        <div class="modal" id="cardModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-credit-card"></i> Card Payment</h3>
+                    <button class="close-modal" onclick="closeModal('cardModal')">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" class="form-control" placeholder="MM/YY">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" class="form-control" placeholder="123">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Amount (KES)</label>
+                    <input type="number" class="form-control" value="100" min="2">
+                </div>
+                <button class="btn btn-success btn-block" onclick="processCardPayment()">
+                    <i class="fas fa-lock"></i> Pay Securely
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 30px; text-align: center; color: #9fb7d6; font-size: 12px;">
+            <p>© 2024 DELTECH ISP. All rights reserved.</p>
+            <p style="margin-top: 5px;">
+                <button onclick="openTestModal()"
+                    style="background: none; border: 1px solid rgba(255,255,255,0.1); color: #9fb7d6; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-flask"></i> Test Mode
+                </button>
+                <span style="margin: 0 10px;">|</span>
+                <button onclick="resetTransactions()"
+                    style="background: none; border: 1px solid rgba(255,127,0,0.3); color: #ff7f00; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-undo"></i> Reset Data
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Server URL - Update this to match your server
+        const SERVER_URL = 'http://localhost:3000';
+
+        // Global variables
+        let allTransactions = [];
+        let currentPaymentMethod = 'mpesa';
+        let currentCheckoutID = null;
+        let paymentPollInterval = null;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set up payment method switching
+            setupPaymentMethods();
+
+            // Set up quick amount buttons
+            setupQuickAmounts();
+
+            // Load initial data
+            loadWalletBalance();
+            loadTransactions();
+            loadStatistics();
+
+            // Set up polling for wallet updates that ipdates after 30secs
+            setInterval(loadWalletBalance, 30000); s
+        });
+
+        // Set up payment method switching
+        function setupPaymentMethods() {
+            const methods = document.querySelectorAll('.payment-method');
+            methods.forEach(method => {
+                method.addEventListener('click', function () {
+                    // Remove active class from all methods
+                    methods.forEach(m => m.classList.remove('active'));
+                    // Add active class to clicked method
+                    this.classList.add('active');
+
+                    // Get the method
+                    currentPaymentMethod = this.getAttribute('data-method');
+
+                    // Show the corresponding form
+                    document.getElementById('mpesaForm').style.display = 'none';
+                    document.getElementById('bankForm').style.display = 'none';
+                    document.getElementById('cardForm').style.display = 'none';
+
+                    document.getElementById(currentPaymentMethod + 'Form').style.display = 'block';
+                });
+            });
+        }
+
+        // Set up quick amount buttons
+        function setupQuickAmounts() {
+            const quickAmounts = document.querySelectorAll('.quick-amount');
+            quickAmounts.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Remove active class from all
+                    quickAmounts.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked
+                    this.classList.add('active');
+                    // Set the amount
+                    const amount = this.getAttribute('data-amount');
+                    document.getElementById('amount').value = amount;
+                });
+            });
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Load wallet balance
+        async function loadWalletBalance() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/wallet/balance`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('walletBalance').textContent = `KES ${data.balance.toLocaleString()}`;
+                }
+            } catch (error) {
+                console.error('Error loading wallet balance:', error);
+            }
+        }
+
+        // Load transactions
+        async function loadTransactions() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/transactions?limit=5`);
+                const data = await response.json();
+
+                if (data.success) {
+                    allTransactions = data.transactions;
+                    updateRecentTransactions(data.transactions);
+                    updateAllTransactions(data.transactions);
+                    updateStatistics(data.summary);
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showStatus('error', 'Failed to load transactions: ' + error.message);
+            }
+        }
+
+        // Update recent transactions table
+        function updateRecentTransactions(transactions) {
+            const tbody = document.getElementById('recentTransactions');
+            tbody.innerHTML = '';
+
+            const recent = transactions.slice(0, 5); // Get 5 most recent
+
+            if (recent.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 20px; color: #9fb7d6;">
+                            No transactions yet
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            recent.forEach(tx => {
+                const time = new Date(tx.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="timestamp">${time}</td>
+                    <td class="amount-positive">KES ${tx.amount}</td>
+                    <td>
+                        <span style="color: var(--green);">
+                            <i class="fas fa-check-circle"></i> Completed
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update all transactions table
+        function updateAllTransactions(transactions) {
+            const tbody = document.getElementById('allTransactions');
+            tbody.innerHTML = '';
+
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 20px; color: #9fb7d6;">
+                            No transactions found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            transactions.forEach(tx => {
+                const date = new Date(tx.datetime).toLocaleDateString();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="timestamp">${date}</td>
+                    <td>${tx.phone}</td>
+                    <td class="amount-positive">KES ${tx.amount}</td>
+                    <td style="font-family: monospace; font-size: 12px;">${tx.mpesaId}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStatistics(summary) {
+            document.getElementById('todayTotal').textContent = `KES ${summary.todayTotal.toLocaleString()}`;
+            document.getElementById('monthTotal').textContent = `KES ${summary.monthTotal.toLocaleString()}`;
+            document.getElementById('totalTransactions').textContent = summary.totalCount.toLocaleString();
+        }
+
+        // Filter transactions
+        function filterTransactions() {
+            const searchTerm = document.getElementById('searchTransactions').value.toLowerCase();
+            const filtered = allTransactions.filter(tx =>
+                tx.phone.toLowerCase().includes(searchTerm) ||
+                tx.mpesaId.toLowerCase().includes(searchTerm) ||
+                tx.amount.toString().includes(searchTerm)
+            );
+            updateAllTransactions(filtered);
+        }
+
+        // Main deposit function
+        async function initiateDeposit() {
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const depositBtn = document.getElementById('depositBtn');
+            const statusDiv = document.getElementById('depositStatus');
+
+            // Validation
+            if (!phone) {
+                showStatus('error', 'Please enter your phone number');
+                return;
+            }
+
+            if (!amount || amount < 2 || amount > 70000) {
+                showStatus('error', 'Please enter a valid amount between KES 2 and KES 70,000');
+                return;
+            }
+
+            // Format phone number if needed
+            let formattedPhone = phone;
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '254' + formattedPhone.substring(1);
+            } else if (formattedPhone.startsWith('+254')) {
+                formattedPhone = formattedPhone.substring(1);
+            }
+
+            // Update UI
+            depositBtn.innerHTML = '<div class="loading"></div> Processing...';
+            depositBtn.disabled = true;
+
+            // Clear any previous status
+            hideStatus();
+
+            // Choose endpoint based on environment
+            const endpoint = `${SERVER_URL}/api/test-deposit`; // Use test endpoint ofr development 
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone: formattedPhone,
+                        amount: amount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('success', `Success! KES ${amount} deposited to your wallet. Receipt: ${data.transaction.mpesaId}`);
+
+                    // Reset form
+                    document.getElementById('amount').value = '';
+                    document.querySelectorAll('.quick-amount').forEach(btn => btn.classList.remove('active'));
+
+                    // Update data
+                    setTimeout(() => {
+                        loadWalletBalance();
+                        loadTransactions();
+                        loadStatistics();
+                    }, 1000);
+                } else {
+                    showStatus('error', data.message || 'Deposit failed');
+                }
+            } catch (error) {
+                console.error('Deposit error:', error);
+                showStatus('error', 'Network error. Please check your connection.');
+            } finally {
+                depositBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Deposit Now';
+                depositBtn.disabled = false;
+            }
+        }
+
+        /// place teh production stk code here during deployment
+
+
+        // Create test deposit
+        async function createTestDeposit() {
+            const phone = document.getElementById('testPhone').value.trim();
+            const amount = parseFloat(document.getElementById('testAmount').value);
+
+            if (!phone || !amount || amount < 2) {
+                alert('Please enter valid phone number and amount (minimum KES 2)');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/test-deposit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone: phone,
+                        amount: amount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Test transaction created!\nAmount: KES ${amount}\nReceipt: ${data.transaction.mpesaId}`);
+                    closeModal('testDepositModal');
+                    loadWalletBalance();
+                    loadTransactions();
+                    loadStatistics();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Test deposit error:', error);
+                alert('Error creating test transaction');
+            }
+        }
+
+        // Reset all transactions
+        async function resetTransactions() {
+            if (!confirm('Are you sure you want to reset all transactions? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/reset-transactions`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('All transactions have been reset');
+                    loadWalletBalance();
+                    loadTransactions();
+                    loadStatistics();
+                }
+            } catch (error) {
+                console.error('Reset error:', error);
+                alert('Error resetting transactions');
+            }
+        }
+
+        // Card payment (mock)
+        function processCardPayment() {
+            showStatus('info', 'Processing card payment... (This is a demo)');
+            setTimeout(() => {
+                showStatus('success', 'Card payment processed successfully!');
+                closeModal('cardModal');
+            }, 2000);
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openTestModal() {
+            openModal('testDepositModal');
+        }
+
+        function openCardModal() {
+            openModal('cardModal');
+        }
+
+        // Status message functions
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('depositStatus');
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' :
+                    type === 'error' ? 'times-circle' :
+                        type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            statusDiv.style.display = 'block';
+
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(hideStatus, 5000);
+            }
+        }
+
+        function hideStatus() {
+            const statusDiv = document.getElementById('depositStatus');
+            statusDiv.style.display = 'none';
+        }
+
+        // Simulate payment (for demo purposes)
+        function simulatePayment() {
+            const phone = '254712345678';
+            const amount = Math.floor(Math.random() * 1000) + 100;
+
+            fetch(`${SERVER_URL}/api/simulate-callback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    amount: amount,
+                    status: 'success'
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('success', `Simulated payment: KES ${amount} from ${phone}`);
+                        loadWalletBalance();
+                        loadTransactions();
+                        loadStatistics();
+                    }
+                })
+                .catch(error => {
+                    console.error('Simulation error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
