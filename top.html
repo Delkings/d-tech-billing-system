@@ -1,846 +1,1861 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>demo|isp dashboard</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<style>
-  :root{ --blue:#0052cc; --orange:#ff7f00; --red:#d9534f; --bg:#071026; --card:#0f1724; --green:#2bd67b; }
-  *{box-sizing:border-box}
-  body{ margin:0; font-family: Inter, Arial, sans-serif; background:var(--bg); color:#eaf2ff; overflow-x: hidden; }
-  /* LIGHT THEME */
-body.light{
-  --bg: #f4f7fb;
-  --card: #ffffff;
-  --blue: #0052cc;
-  --orange: #ff7f00;
-  --red: #d9534f;
-  --green: #2bd67b;
-  color: #0f1724;
-}
-
-  /* HAMBURGER FIX */
-.hamburger-container{
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1200;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* BAR */
-.hamburger{
-  position: relative;
-  width: 18px;
-  height: 2px;
-  background: #ffffff;
-  transition: all 0.3s ease;
-}
-
-/* TOP & BOTTOM BARS */
-.hamburger::before,
-.hamburger::after{
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 18px;
-  height: 2px;
-  background: #ffffff;
-  transition: all 0.3s ease;
-}
-
-.hamburger::before{
-  top: -6px;
-}
-
-.hamburger::after{
-  top: 6px;
-}
-
-  .sidebar.open ~ .hamburger-container .hamburger::before{ 
-    transform: rotate(45deg) translate(5px, 5px); 
-    top: 0; 
-  }
-  .sidebar.open ~ .hamburger-container .hamburger::after{ 
-    transform: rotate(-45deg) translate(7px, -6px); 
-    top: 0; 
-  }
-
-  /* SIDEBAR */
-  .sidebar{ position:fixed; left:0; top:0; width:280px; max-width:90vw; height:100vh; overflow-y:auto; padding:18px; background:linear-gradient(180deg, rgba(0,82,204,0.35), rgba(7,16,38,0.88)); backdrop-filter:blur(6px); border-right:1px solid rgba(255,255,255,0.03); z-index:999; transition:transform .3s cubic-bezier(0.4, 0, 0.2, 1); transform:translateX(-100%); }
-  .sidebar.open{ transform:translateX(0); }
-  .brand { background: linear-gradient(135deg,var(--orange),var(--blue)); color:#031025; padding:18px; border-radius:10px; text-align:left; }
-  .brand h3{ margin:0; font-size:16px; }
-  .brand p{ margin:6px 0 0; font-size:12px; opacity:0.9; }
-  .nav-group{ margin-top:20px; }
-  .nav-title{ color:#bcd2ff; font-weight:700; margin:8px 4px; font-size:13px; }
-  .nav-item{ display:flex; align-items:center; gap:12px; padding:12px; margin:8px 4px; border-radius:10px; color:#eaf2ff; text-decoration:none; background:rgba(255,255,255,0.02); }
-  .nav-item:hover{ background: rgba(255,127,0,0.07); transform:translateX(6px); }
-  .nav-item .icon{ width:28px; text-align:center; }
-  .badge-new{ background:var(--red); color:white; padding:2px 6px; border-radius:6px; font-size:11px; margin-left:auto; }
-  .sidebar::-webkit-scrollbar{ width:8px } .sidebar::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.04); border-radius:8px }
-
-  /* OVERLAY */
-  #sidebarOverlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.6);
-    z-index:998;
-    display:none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  #sidebarOverlay.show{
-    display:block;
-    opacity: 1;
-  }
-
-  /* MAIN - FULL RESPONSIVE */
-  .main{ 
-    margin:0; 
-    padding:16px; 
-    min-height:100vh; 
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    padding-top: 80px;
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
-  .main.sidebar-open{ margin-left:280px; }
-  /* TOP BAR FIX */
-.topbar{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.title{
-  font-size: 28px;
-  color: var(--blue);
-  font-weight: 800;
-  margin: 0;
-  text-align: left;
-}
-
-.top-controls{
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: flex-end 
-}
-
-   }
-  .theme-toggle{
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: rgba(255,255,255,0.08);
-  transition: all 0.25s ease;
-}
-
-.theme-toggle:hover{
-  transform: scale(1.05);
-  background: rgba(255,255,255,0.15);
-}
-
-  .btn{ 
-    padding:10px 16px; 
-    border-radius:10px; 
-    border:0; 
-    cursor:pointer; 
-    font-weight:700;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-  .btn-topup{ background:#2bd67b; color:#042316 }
-
-  /* PERFECT RESPONSIVE GRIDS */
-  .grid-4{ 
-    display:grid; 
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); 
-    gap:14px; 
-    margin-top:18px; 
-    align-items:stretch;
-    width: 100%;
-  }
-  @media (max-width: 768px){
-    .grid-4{ 
-      grid-template-columns:1fr; 
-      gap:12px;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>demo|isp dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #0052cc;
+      --orange: #ff7f00;
+      --red: #d9534f;
+      --bg: #071026;
+      --card: #0f1724;
+      --green: #2bd67b;
     }
-  }
-  @media (min-width: 769px) and (max-width: 1024px){
-    .grid-4{ 
-      grid-template-columns:repeat(2,1fr); 
+
+    * {
+      box-sizing: border-box
     }
-  }
-  .grid-4 > .card{ 
-    display:flex; 
-    flex-direction:column; 
-    justify-content:space-between; 
-    height:100%; 
-  }
-  
-  .card{ 
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); 
-    border:1px solid rgba(255,255,255,0.02); 
-    padding:16px; 
-    border-radius:12px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .card h4{ margin:0 0 8px; color:var(--blue) }
-  .stat-large{ font-size:26px; font-weight:800 }
-  .muted{ color:#9fb7d6; font-size:13px }
 
-  /* TWO COLUMN - FULL RESPONSIVE */
-  .two-col{ 
-    display:grid; 
-    grid-template-columns:1fr; 
-    gap:16px; 
-    margin-top:16px 
-  }
-  @media (min-width: 1025px){
-    .two-col{ grid-template-columns:2fr 1fr; }
-  }
-  .chart{ 
-    height:200px; 
-    width: 100%;
-  }
-  .small-grid{ 
-    display:grid; 
-    grid-template-columns:1fr; 
-    gap:12px; 
-    margin-top:12px 
-  }
-  @media (min-width: 769px){
-    .small-grid{ grid-template-columns:repeat(2,1fr); }
-  }
-  .widget{ margin-bottom:12px }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: #eaf2ff;
+      overflow-x: hidden;
+    }
 
-  /* TABLES - MOBILE FRIENDLY */
-  table{ 
-    width:100%; 
-    border-collapse:collapse; 
-    color:#eaf2ff;
-    font-size: 12px;
-  }
-  th,td{ 
-    padding:10px 6px; 
-    text-align:left; 
-    border-bottom:1px solid rgba(255,255,255,0.03); 
-    font-size:13px;
-    word-break: break-word;
-  }
-  th{ background:rgba(255,255,255,0.02); color:#fff }
-  .actions button{ 
-    margin-right:8px;
-    padding: 6px 10px;
-    font-size: 12px;
-  }
+    /* LIGHT THEME */
+    body.light {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --blue: #0052cc;
+      --orange: #ff7f00;
+      --red: #d9534f;
+      --green: #2bd67b;
+      color: #0f1724;
+    }
 
-  /* FULL WIDTH */
-  .full-width{ margin-top:18px; width: 100%; }
+    .hamburger-container {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 1200;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      cursor: pointer;
+    }
 
-  /* RESPONSIVE BREAKPOINTS */
-  @media (max-width:480px){ 
-    .main{ padding:12px; padding-top: 80px; }
-    .title{ font-size:24px; }
-    .btn{ padding:8px 12px; font-size: 13px; }
-    .stat-large{ font-size:22px; }
-    .card{ padding:12px; }
-    table th, table td{ padding:8px 4px; font-size:12px; }
-  }
-  
-  @media (max-width:320px){ 
-    .sidebar{ width:95vw; }
-    .main.sidebar-open{ margin-left:95vw; }
-  }
+    /* BAR */
+    .hamburger {
+      position: relative;
+      width: 18px;
+      height: 2px;
+      background: #ffffff;
+      transition: all 0.3s ease;
+    }
 
-  /* Modal styles */
-  .modal-overlay{ 
-    position:fixed; 
-    inset:0; 
-    background:rgba(0,0,0,0.8); 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    z-index:1001; 
-    backdrop-filter:blur(4px);
-    padding: 20px;
-  }
-  .modal{ 
-    background:var(--card); 
-    padding:24px; 
-    border-radius:12px; 
-    max-width:500px; 
-    width:100%; 
-    max-height:90vh; 
-    overflow-y:auto;
-  }
-  .btn-primary{ background:var(--blue); color:white; }
-  .btn-accent{ background:var(--orange); color:white; }
-  .btn-danger{ background:var(--red); color:white; }
-  .btn-ghost{ background:transparent; color:#eaf2ff; border:1px solid rgba(255,255,255,0.1); }
-  input, select, textarea{ 
-    width:100%; 
-    padding:12px; 
-    margin-top:6px; 
-    border-radius:8px; 
-    background:rgba(255,255,255,0.05); 
-    border:1px solid rgba(255,255,255,0.1); 
-    color:#eaf2ff; 
-    font-size:14px;
-    box-sizing: border-box;
-  }
-  input::placeholder, textarea::placeholder{ color:#9fb7d6; }
-  .chip{ padding:6px 12px; border-radius:20px; font-size:12px; }
- 
-  @media (max-width: 600px){
-  .topbar{
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .top-controls{
-    justify-content: right;
-  }
-}
-/* HAMBURGER VISIBILITY – LIGHT MODE */
-body.light .hamburger,
-body.light .hamburger::before,
-body.light .hamburger::after{
-  background: #0f1724; /* dark color */
-}
+    /* TOP & BOTTOM BARS */
+    .hamburger::before,
+    .hamburger::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 18px;
+      height: 2px;
+      background: #ffffff;
+      transition: all 0.3s ease;
+    }
 
-</style>
+    .hamburger::before {
+      top: -6px;
+    }
+
+    .hamburger::after {
+      top: 6px;
+    }
+
+    .sidebar.open~.hamburger-container .hamburger::before {
+      transform: rotate(45deg) translate(5px, 5px);
+      top: 0;
+    }
+
+    .sidebar.open~.hamburger-container .hamburger::after {
+      transform: rotate(-45deg) translate(7px, -6px);
+      top: 0;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      max-width: 90vw;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(0, 82, 204, 0.35), rgba(7, 16, 38, 0.88));
+      backdrop-filter: blur(6px);
+      border-right: 1px solid rgba(255, 255, 255, 0.03);
+      z-index: 999;
+      transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .brand {
+      background: linear-gradient(135deg, var(--orange), var(--blue));
+      color: #031025;
+      padding: 18px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .brand h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .nav-group {
+      margin-top: 20px;
+    }
+
+    .nav-title {
+      color: #bcd2ff;
+      font-weight: 700;
+      margin: 8px 4px;
+      font-size: 13px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin: 8px 4px;
+      border-radius: 10px;
+      color: #eaf2ff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 127, 0, 0.07);
+      transform: translateX(6px);
+    }
+
+    .nav-item .icon {
+      width: 28px;
+      text-align: center;
+    }
+
+    .badge-new {
+      background: var(--red);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-left: auto;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px
+    }
+
+    /* OVERLAY */
+    #sidebarOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 998;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #sidebarOverlay.show {
+      display: block;
+      opacity: 1;
+    }
+
+    /* MAIN - FULL RESPONSIVE */
+    .main {
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding-top: 80px;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .main.sidebar-open {
+      margin-left: 280px;
+    }
+
+    /* TOP BAR FIX */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .title {
+      font-size: 28px;
+      color: var(--blue);
+      font-weight: 800;
+      margin: 0;
+      text-align: left;
+    }
+
+    .top-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .theme-toggle {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.25s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .btn-topup {
+      background: #2bd67b;
+      color: #042316
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-accent {
+      background: var(--orange);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: white;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #eaf2ff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* PERFECT RESPONSIVE GRIDS */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .grid-4 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .grid-4>.card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      padding: 16px;
+      border-radius: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+      color: var(--blue)
+    }
+
+    .stat-large {
+      font-size: 26px;
+      font-weight: 800
+    }
+
+    .muted {
+      color: #9fb7d6;
+      font-size: 13px
+    }
+
+    /* TWO COLUMN - FULL RESPONSIVE */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px
+    }
+
+    @media (min-width: 1025px) {
+      .two-col {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    .chart {
+      height: 200px;
+      width: 100%;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px
+    }
+
+    @media (min-width: 769px) {
+      .small-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .widget {
+      margin-bottom: 12px
+    }
+
+    /* TABLES - MOBILE FRIENDLY */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #eaf2ff;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 10px 6px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff
+    }
+
+    .actions button {
+      margin-right: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    /* FULL WIDTH */
+    .full-width {
+      margin-top: 18px;
+      width: 100%;
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width:480px) {
+      .main {
+        padding: 12px;
+        padding-top: 80px;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .stat-large {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 12px;
+      }
+
+      table th,
+      table td {
+        padding: 8px 4px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width:320px) {
+      .sidebar {
+        width: 95vw;
+      }
+
+      .main.sidebar-open {
+        margin-left: 95vw;
+      }
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      backdrop-filter: blur(4px);
+      padding: 20px;
+    }
+
+    .modal {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #eaf2ff;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9fb7d6;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-controls {
+        justify-content: right;
+      }
+    }
+
+    /* HAMBURGER VISIBILITY – LIGHT MODE */
+    body.light .hamburger,
+    body.light .hamburger::before,
+    body.light .hamburger::after {
+      background: #0f1724;
+      /* dark color */
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* LIGHT THEME – CONTENT READABILITY */
+    body.light .card,
+    body.light .page,
+    body.light .main {
+      color: #0f1724;
+    }
+
+    /* Muted text */
+    body.light .muted {
+      color: #5b6b82;
+    }
+
+    body.light table {
+      color: #0f1724;
+    }
+
+    body.light th {
+      background: #f0f3f8;
+      color: #0f1724;
+    }
+
+    body.light td {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    body.light input,
+    body.light select,
+    body.light textarea {
+      background: #ffffff;
+      color: #0f1724;
+      border: 1px solid #cbd5e1;
+    }
+
+    body.light .btn-ghost {
+      color: #0f1724;
+      border-color: #cbd5e1;
+    }
+
+    /* TOP BAR ALIGNMENT FIX */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: nowrap;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Wallet display */
+    .wallet-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* Light mode fix */
+    body.light .wallet-info {
+      background: #eef2f7;
+      color: #0f1724;
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-controls {
+        justify-content: space-between;
+      }
+
+      .wallet-card {
+        background: var(--card);
+        padding: 16px;
+        border-radius: 14px;
+      }
+
+      .wallet-type {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      .wallet-id {
+        font-size: 12px;
+        color: var(--blue);
+        font-weight: 600;
+      }
+
+      .wallet-balance {
+        font-size: 24px;
+        font-weight: 800;
+        margin-top: 10px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- TOP LEFT FIXED HAMBURGER -->
-<div class="hamburger-container" id="hamburgerToggle">
-  <div class="hamburger"></div>
-</div>
-
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="brand">
-    <img src="/mnt/data/lopi.PNG" alt="brand" style="width:100%;border-radius:8px;margin-bottom:10px;max-height:60px;object-fit:cover">
-    <h3>Good Morning ☀️<br>demo User!</h3>
-    <p style="margin:6px 0 0; font-size:13px; color:rgba(0,0,0,0.6)">Your courage builds success!</p>
+  <!-- TOP LEFT FIXED HAMBURGER -->
+  <div class="hamburger-container" id="hamburgerToggle">
+    <div class="hamburger"></div>
   </div>
 
-  <a class="nav-item" href="#"><span class="icon"><i class="fa fa-home"></i></span> Dashboard</a>
-  <a class="nav-item" href="#"><span class="icon"><i class="fa fa-chart-bar"></i></span> Analitics</a>
-      
-  <div class="nav-group">
-    <div class="nav-title">Finance</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-credit-card"></i></span> Transactions</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-chart-line"></i></span> Income</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-title">Messages</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-bell"></i></span> Notifications</a>
-  </div>
-  
-  <div class="nav-group">
-    <div class="nav-title">Bulk SMS</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-comment"></i></span> Quick send</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-mail-bulk"></i></span> Bulk SMS</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-cogs"></i></span> Configure Sms Gateway</a>
-  </div>
-  
-  <div class="nav-group">
-    <div class="nav-title">Hotspot</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-box"></i></span> Packages</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-ticket-alt"></i></span> Vouchers</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-user-plus"></i></span> Add User</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-title">PPPoE</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-signal"></i></span> Plans</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-users"></i></span> Users</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-title">Routers & Devices</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-wifi"></i></span> Stations</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-cog"></i></span> Router Setup</a>
-  </div>
-  
-  <div class="nav-group">
-    <div class="nav-title">Payment Gateway</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-wallet"></i></span> Wallets</a>
-  </div>
-    
-  <div class="nav-group">
-    <div class="nav-title">Roaming</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-network-wired"></i></span> Remote Management</a>
-  </div>
-   
-  <div class="nav-group">
-    <div class="nav-title">System</div>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-wrench"></i></span> Settings</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-history"></i></span> Logs</a>
-    <a class="nav-item" href="#"><span class="icon"><i class="fa fa-sign-out"></i></span> Logout</a>
-  </div>
-</aside>
-
-<!-- OVERLAY -->
-<div id="sidebarOverlay"></div>
-
-<!-- MAIN -->
-<main class="main" id="main">
-  <div class="topbar">
-    <div class="title">Welcome to DELTECH-ISP</div>
-    <div class="top-controls">
-      <button class="btn btn-topup"><i class="fa fa-wallet"></i> Top Up Wallet</button>
-      <div class="theme-toggle"><i class="fa fa-moon"></i></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="/mnt/data/lopi.PNG" alt="brand"
+        style="width:100%;border-radius:8px;margin-bottom:10px;max-height:60px;object-fit:cover">
+      <h3>Good Morning ☀️<br>demo User!</h3>
+      <p style="margin:6px 0 0; font-size:13px; color:rgba(0,0,0,0.6)">Your courage builds success!</p>
     </div>
-  </div>
-  
 
-  <!-- account cards -->
-  <section class="grid-4">
-    <div class="card">
-      <h4>Account Information</h4>
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <a class="nav-item" href="#" onclick="navigate('dashboard')">
+      <span class="icon"><i class="fa fa-home"></i></span>
+      Dashboard
+    </a>
+
+    <a class="nav-item" href="#">
+      <span class="icon"><i class="fa fa-chart-bar"></i></span> Analytics
+    </a>
+
+    <div class="nav-group">
+      <div class="nav-title">Finance</div>
+      <a class="nav-item" href="#" onclick="navigate('transactions')">
+        <i class="fa fa-credit-card"></i> Transactions
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-chart-line"></i></span> Income
+      </a>
+    </div>
+
+    <a class="nav-item" href="#" onclick="navigate('wallets')">
+      <i class="fa fa-wallet"></i> Wallets
+    </a>
+
+    <div class="nav-group">
+      <div class="nav-title">Messages</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-bell"></i></span> Notifications
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Bulk SMS</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-comment"></i></span> Quick send
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-mail-bulk"></i></span> Bulk SMS
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-cogs"></i></span> Configure Sms Gateway
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Hotspot</div>
+      <a class="nav-item" href="#" onclick="navigate('packages')">
+        <span class="icon"><i class="fa fa-box"></i></span> Packages
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-ticket-alt"></i></span> Vouchers
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-user-plus"></i></span> Add User
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">PPPoE</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-signal"></i></span> Plans
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-users"></i></span> Users
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Routers & Devices</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-wifi"></i></span> Stations
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-cog"></i></span> Router Setup
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Payment Gateway</div>
+      <a class="nav-item" href="#" onclick="navigate('wallets')">
+        <i class="fa fa-wallet"></i> Wallets
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Roaming</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-network-wired"></i></span> Remote Management
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">System</div>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-wrench"></i></span> Settings
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-history"></i></span> Logs
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon"><i class="fa fa-sign-out"></i></span> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- OVERLAY -->
+  <div id="sidebarOverlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main">
+    <!-- DASHBOARD PAGE -->
+    <section id="page-dashboard" class="page active">
+      <div class="topbar">
+        <div class="title">Welcome to DELTECH-ISP</div>
+        <div class="top-controls">
+          <div class="wallet-info">
+            <i class="fa fa-wallet"></i>
+            <span>KES 0</span>
+          </div>
+          <button class="btn btn-topup">Top Up</button>
+          <div class="theme-toggle">
+            <i class="fa fa-moon"></i>
+          </div>
+        </div>
+      </div>
+
+      <section class="grid-4">
+        <div class="card">
+          <h4>Account Information</h4>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="font-weight:800;font-size:16px">DELTECH NETWORKS</div>
+              <div class="muted">Active • Monthly</div>
+              <div style="margin-top:8px"><span class="chip"
+                  style="background:rgba(0,0,0,0.25);padding:6px;border-radius:8px;color:#fff">Trial: 7 days left</span>
+              </div>
+            </div>
+            <div>
+              <div
+                style="background:rgba(0,0,0,0.18);padding:10px;border-radius:8px;color:var(--orange);font-weight:800">
+                Top Up</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Trial Period</h4>
+          <div class="stat-large">7 <span class="muted" style="font-size:14px">days left</span></div>
+        </div>
+
+        <div class="card">
+          <h4>Transaction Wallet</h4>
+          <div class="stat-large" style="color:var(--orange)">0</div>
+          <div class="muted">Top Up</div>
+        </div>
+
+        <div class="card">
+          <h4>SMS Balance</h4>
+          <div class="stat-large" style="color:var(--blue)">0</div>
+          <div class="muted">This month: 0 sent</div>
+        </div>
+
+        <div class="card">
+          <h4>Hotspot Clients</h4>
+          <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;">
+              <div style="font-weight:800;color:var(--orange)">0</div>
+              <div class="muted">Active</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;">
+              <div style="font-weight:800;color:var(--red)">0</div>
+              <div class="muted">Total</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>PPPoE Clients</h4>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--blue)">0</div>
+              <div class="muted">Active</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--orange)">0</div>
+              <div class="muted">Inactive</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--red)">0</div>
+              <div class="muted">Total</div>
+            </div>
+          </div>
+          <div class="muted" style="margin-top:8px">Monthly Charge: KES 0</div>
+        </div>
+      </section>
+
+      <!-- main two column -->
+      <section class="two-col">
         <div>
-          <div style="font-weight:800;font-size:16px">DELTECH NETWORKS</div>
-          <div class="muted">Active • Monthly</div>
-          <div style="margin-top:8px"><span class="chip" style="background:rgba(0,0,0,0.25);padding:6px;border-radius:8px;color:#fff">Trial: 7 days left</span></div>
+          <div class="card">
+            <h4>Monthly Income (Last 12 months)</h4>
+            <div class="chart" id="chartMonthly"><canvas id="chartMonthlyCanvas"></canvas></div>
+          </div>
+
+          <div class="small-grid">
+            <div class="card">
+              <h4>Weekly Income</h4>
+              <div class="chart"><canvas id="chartWeeklyCanvas"></canvas></div>
+            </div>
+            <div class="card">
+              <h4>Daily Sales (24 hours)</h4>
+              <div class="chart"><canvas id="chartDailyCanvas"></canvas></div>
+            </div>
+          </div>
+
+          <div class="small-grid">
+            <div class="card">
+              <h4>Usage Patterns (hours)</h4>
+              <div class="chart"><canvas id="chartUsageCanvas"></canvas></div>
+            </div>
+            <div class="card">
+              <h4>Router Health</h4>
+              <div class="chart"><canvas id="chartHealthCanvas"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="widget card">
+            <h4>Hotspot Users</h4>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div style="font-weight:800;color:var(--orange)">0</div>
+                <div class="muted">Active / Total</div>
+              </div>
+              <div><button class="btn btn-accent" onclick="openModal('modalHotspot')">Manage</button></div>
+            </div>
+            <table style="margin-top:10px">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>client1</td>
+                  <td>active</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="widget card">
+            <h4>Transactions</h4>
+            <div class="muted">Latest payments</div>
+            <table style="margin-top:8px">
+              <thead>
+                <tr>
+                  <th>Voucher</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PHX0Z</td>
+                  <td>Ksh 20</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:8px"><button class="btn btn-accent" onclick="openModal('modalTransactions')">View
+                All</button></div>
+          </div>
+
+          <div class="widget card">
+            <h4>Wallet</h4>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <div style="font-weight:800;color:var(--orange)">KES 0</div>
+              <div class="muted">Mpesa linked</div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;width:100%;">
+              <button class="btn btn-primary" onclick="openModal('modalWallet')">History</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- PPPoE table -->
+      <section class="card full-width">
+        <h4>PPPoE Users</h4>
+        <div class="muted">Manage PPPoE user stations</div>
+        <table style="margin-top:10px">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pppoeList">
+            <tr>
+              <td>pppoe_user1</td>
+              <td>Plan B</td>
+              <td>Active</td>
+              <td>
+                <button class="btn btn-ghost" onclick="openManagePppoe(this)">Manage</button>
+                <button class="btn btn-danger" onclick="deletePppoe(this)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- TRANSACTIONS PAGE -->
+    <section id="page-transactions" class="page">
+      <div class="topbar">
+        <div class="title">Transactions</div>
+        <div class="top-controls">
+          <button class="btn" onclick="exportPDF()">Export PDF</button>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <h4>Monthly Income</h4>
+          <div class="stat-large" id="monthlyIncome">KES 0</div>
+          <div class="muted">Current month</div>
+        </div>
+        <div class="card">
+          <h4>Transaction Wallet</h4>
+          <div class="stat-large" style="color:var(--orange)" id="walletBalance">KES 0</div>
+          <div class="muted">Resets daily at 00:00</div>
+        </div>
+      </div>
+
+      <div class="card full-width" style="margin-top: 15px;">
+        <div class="filters" style="display:flex; gap:10px; margin-bottom:15px;">
+          <input type="date" id="fromDate">
+          <input type="date" id="toDate">
+          <button class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>M-Pesa ID</th>
+              <th>Phone No</th>
+              <th>Amount (KES)</th>
+              <th>Date & Time</th>
+              <th>Wallet ID</th>
+            </tr>
+          </thead>
+          <tbody id="mpesaTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- WALLETS PAGE -->
+    <section id="page-wallets" class="page">
+      <div class="topbar">
+        <div class="title">Wallets</div>
+        <button class="btn btn-primary" onclick="openModal('modalCreateWallet')">+ Add Wallet</button>
+      </div>
+      <div class="grid-4" id="walletGrid"></div>
+    </section>
+
+    <!-- PACKAGES PAGE -->
+    <section id="page-packages" class="page">
+      <div class="topbar">
+        <div class="title">Hotspot Packages</div>
+        <button class="btn btn-primary" onclick="openModal('modalAddPackage')">+ New Package</button>
+      </div>
+      <div class="grid-4" id="packageGrid"></div>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+  <div id="modalHotspot" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Manage Hotspot</h3>
+      <p class="muted">Active sessions and actions.</p>
+      <button class="btn btn-ghost" onclick="closeModal('modalHotspot')">Close</button>
+    </div>
+  </div>
+
+  <div id="modalAddPppoe" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Add PPPoE User</h3>
+      <label class="muted">Username</label>
+      <input id="newPppUser" placeholder="Enter username">
+      <label class="muted">Plan</label>
+      <select id="newPppPlan">
+        <option>Plan A</option>
+        <option>Plan B</option>
+      </select>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="addPppoeUser()">Create</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalAddPppoe')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalManagePppoe" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Manage PPPoE</h3>
+      <p id="managePppName" class="muted"></p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="togglePppStatus()">Toggle Suspend</button>
+        <button class="btn btn-danger" onclick="confirmDeletePpp()">Delete</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalManagePppoe')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalBulkSms" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Send Bulk SMS</h3>
+      <label class="muted">Message</label>
+      <textarea id="smsText" placeholder="Enter your message..."></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="sendBulkSMS()">Send</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalBulkSms')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalTransactions" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Transactions</h3>
+      <table style="margin-top:10px">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>8:04</td>
+            <td>PHX0Z</td>
+            <td>Ksh 20</td>
+            <td>Completed</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="closeModal('modalTransactions')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalWallet" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Wallet History</h3>
+      <table style="margin-top:8px">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-11-01</td>
+            <td>Ksh 10,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:8px">
+        <button class="btn btn-ghost" onclick="closeModal('modalWallet')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalCreateWallet" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Create New Wallet</h3>
+        <button class="btn-ghost" onclick="closeModal('modalCreateWallet')">&times;</button>
+      </div>
+
+      <div style="margin-top:15px;">
+        <label class="muted">Wallet Name</label>
+        <input type="text" id="wName" placeholder="e.g. Main Paybill">
+
+        <label class="muted" style="margin-top:10px; display:block;">Wallet Type</label>
+        <select id="wType" onchange="toggleWalletFields()">
+          <option value="Paybill">M-Pesa Paybill</option>
+          <option value="BuyGoods">M-Pesa Till</option>
+          <option value="Bank">Bank Account</option>
+        </select>
+
+        <div id="dynamicFields" style="margin-top:15px;">
+          <label class="muted">Shortcode / Paybill No</label>
+          <input type="number" id="wShortcode" placeholder="Enter number">
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitNewWallet()">Save Wallet</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalCreateWallet')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddPackage" class="modal-overlay" style="display:none;">
+    <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+      <h3>Advanced Hotspot Package</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+        <div>
+          <label class="muted">Plan Name</label>
+          <input type="text" id="pName" placeholder="e.g. 1GB Daily">
         </div>
         <div>
-          <div style="background:rgba(0,0,0,0.18);padding:10px;border-radius:8px;color:var(--orange);font-weight:800">Top Up</div>
+          <label class="muted">Price (KES)</label>
+          <input type="number" id="pPrice" placeholder="50">
         </div>
-      </div>
-    </div>
 
-    <div class="card">
-      <h4>Trial Period</h4>
-      <div class="stat-large">7 <span class="muted" style="font-size:14px">days left</span></div>
-    </div>
-
-    <div class="card">
-      <h4>Transaction Wallet</h4>
-      <div class="stat-large" style="color:var(--orange)">0</div>
-      <div class="muted">Top Up</div>
-    </div>
-
-    <div class="card">
-      <h4>SMS Balance</h4>
-      <div class="stat-large" style="color:var(--blue)">0</div>
-      <div class="muted">This month: 0 sent</div>
-    </div>
-
-    <div class="card">
-      <h4>Hotspot Clients</h4>
-      <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
-        <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;"><div style="font-weight:800;color:var(--orange)">0</div><div class="muted">Active</div></div>
-        <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;"><div style="font-weight:800;color:var(--red)">0</div><div class="muted">Total</div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4>PPPoE Clients</h4>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;"><div style="font-weight:800;color:var(--blue)">0</div><div class="muted">Active</div></div>
-        <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;"><div style="font-weight:800;color:var(--orange)">0</div><div class="muted">Inactive</div></div>
-        <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;"><div style="font-weight:800;color:var(--red)">0</div><div class="muted">Total</div></div>
-      </div>
-      <div class="muted" style="margin-top:8px">Monthly Charge: KES 0</div>
-    </div>
-  </section>
-
-  <!-- main two column -->
-  <section class="two-col">
-    <div>
-      <div class="card">
-        <h4>Monthly Income (Last 12 months)</h4>
-        <div class="chart" id="chartMonthly"><canvas id="chartMonthlyCanvas"></canvas></div>
-      </div>
-
-      <div class="small-grid">
-        <div class="card">
-          <h4>Weekly Income</h4>
-          <div class="chart"><canvas id="chartWeeklyCanvas"></canvas></div>
+        <div>
+          <label class="muted">Expiry Mode</label>
+          <select id="pExpiryMode" onchange="toggleExpiryFields()">
+            <option value="Data">Data Limit (MB/GB)</option>
+            <option value="Fixed">Fixed Time (Usage Based)</option>
+            <option value="FirstLogin">Fixed Time (Countdown)</option>
+          </select>
         </div>
-        <div class="card">
-          <h4>Daily Sales (24 hours)</h4>
-          <div class="chart"><canvas id="chartDailyCanvas"></canvas></div>
+        <div id="expiryValueContainer">
+          <label class="muted">Data Limit / Duration</label>
+          <input type="text" id="pExpiryValue" placeholder="1GB or 24H">
+        </div>
+
+        <div>
+          <label class="muted">Speed (Mbps)</label>
+          <input type="number" id="pSpeed" placeholder="5">
+        </div>
+        <div>
+          <label class="muted">Devices per Voucher</label>
+          <input type="number" id="pDevices" value="1">
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label class="muted">Availability</label>
+          <select id="pScope">
+            <option value="Universal">Universal (All Stations)</option>
+            <option value="Specific">Specific Router Only</option>
+          </select>
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label class="muted">Show on Days:</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px;">
+            <label><input type="checkbox" class="pDay" value="Mon"> Mon</label>
+            <label><input type="checkbox" class="pDay" value="Tue"> Tue</label>
+            <label><input type="checkbox" class="pDay" value="Wed"> Wed</label>
+            <label><input type="checkbox" class="pDay" value="Thu"> Thu</label>
+            <label><input type="checkbox" class="pDay" value="Fri"> Fri</label>
+            <label><input type="checkbox" class="pDay" value="Sat"> Sat</label>
+            <label><input type="checkbox" class="pDay" value="Sun"> Sun</label>
+          </div>
         </div>
       </div>
 
-      <div class="small-grid">
-        <div class="card">
-          <h4>Usage Patterns (hours)</h4>
-          <div class="chart"><canvas id="chartUsageCanvas"></canvas></div>
-        </div>
-        <div class="card">
-          <h4>Router Health</h4>
-          <div class="chart"><canvas id="chartHealthCanvas"></canvas></div>
-        </div>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: 1" onclick="submitNewPackage()">Create Package</button>
+        <button class="btn btn-ghost" style="flex: 1" onclick="closeModal('modalAddPackage')">Cancel</button>
       </div>
-    </div>
-
-    <aside>
-      <div class="widget card">
-        <h4>Hotspot Users</h4>
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-          <div><div style="font-weight:800;color:var(--orange)">0</div><div class="muted">Active / Total</div></div>
-          <div><button class="btn btn-accent" onclick="openModal('modalHotspot')">Manage</button></div>
-        </div>
-        <table style="margin-top:10px"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>client1</td><td>active</td></tr></tbody></table>
-      </div>
-
-      <div class="widget card">
-        <h4>Transactions</h4>
-        <div class="muted">Latest payments</div>
-        <table style="margin-top:8px"><thead><tr><th>Voucher</th><th>Amount</th></tr></thead><tbody><tr><td>PHX0Z</td><td>Ksh 20</td></tr></tbody></table>
-        <div style="margin-top:8px"><button class="btn btn-accent" onclick="openModal('modalTransactions')">View All</button></div>
-      </div>
-
-      <div class="widget card">
-        <h4>Wallet</h4>
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><div style="font-weight:800;color:var(--orange)">KES 0</div><div class="muted">Mpesa linked</div></div>
-        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;width:100%;"><button class="btn btn-primary" onclick="openModal('modalWallet')">History</button></div>
-      </div>
-    </aside>
-  </section>
-
-  <!-- PPPoE table -->
-  <section class="card full-width">
-    <h4>PPPoE Users</h4>
-    <div class="muted">Manage PPPoE user stations</div>
-    <table style="margin-top:10px"><thead><tr><th>Username</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="pppoeList">
-        <tr><td>pppoe_user1</td><td>Plan B</td><td>Active</td><td><button class="btn btn-ghost" onclick="openManagePppoe(this)">Manage</button><button class="btn btn-danger" onclick="deletePppoe(this)">Delete</button></td></tr>
-      </tbody>
-    </table>
-  </section>
-</main>
-
-<!-- MODALS -->
-<div id="modalHotspot" class="modal-overlay" style="display:none;">
-  <div class="modal"><h3>Manage Hotspot</h3><p class="muted">Active sessions and actions.</p><div style="margin-top:10px"><button class="btn btn-primary" onclick="closeModal('modalHotspot')">Close</button></div></div>
-</div>
-
-<div id="modalAddPppoe" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <h3>Add PPPoE User</h3>
-    <label class="muted">Username</label>
-    <input id="newPppUser" placeholder="Enter username">
-    <label class="muted">Plan</label>
-    <select id="newPppPlan">
-      <option>Plan A</option>
-      <option>Plan B</option>
-    </select>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="addPppoeUser()">Create</button>
-      <button class="btn btn-ghost" onclick="closeModal('modalAddPppoe')">Cancel</button>
     </div>
   </div>
-</div>
 
-<div id="modalManagePppoe" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <h3>Manage PPPoE</h3>
-    <p id="managePppName" class="muted"></p>
-    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-accent" onclick="togglePppStatus()">Toggle Suspend</button>
-      <button class="btn btn-danger" onclick="confirmDeletePpp()">Delete</button>
-      <button class="btn btn-ghost" onclick="closeModal('modalManagePppoe')">Close</button>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // ================= GLOBAL STATE =================
+    let wallets = [];
+    let hotspotPackages = [];
+    let mpesaTransactions = [
+      {
+        mpesaId: "QHX7PLM9",
+        phone: "254712345678",
+        amount: 500,
+        datetime: "2025-12-19 09:12",
+        walletId: "WLT-001"
+      },
+      {
+        mpesaId: "QHX7PLMA",
+        phone: "254798765432",
+        amount: 1200,
+        datetime: "2025-12-19 11:34",
+        walletId: "WLT-001"
+      }
+    ];
+
+    // Bank data
+    const bankData = {
+      "KCB Bank": "522522",
+      "Equity Bank": "247247",
+      "Co-operative Bank": "400200",
+      "Absa Bank": "303030",
+      "NCBA Bank": "880100",
+      "Stanbic Bank": "600100"
+    };
+
+    // Initialize sample wallets
+    wallets = [
+      { id: "WL-001", name: "Main Bank Account", type: "Bank", balance: 10000, bank: "KCB Bank", paybill: "522522", account: "12345678" }
+    ];
+
+    // ================= SIDEBAR FUNCTIONALITY =================
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    const hamburgerToggle = document.getElementById('hamburgerToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    let hoverTimeout;
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      main.classList.add('sidebar-open');
+      sidebarOverlay.classList.add('show');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      main.classList.remove('sidebar-open');
+      sidebarOverlay.classList.remove('show');
+      clearTimeout(hoverTimeout);
+    }
+
+    // CURSOR DETECTION
+    sidebar.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimeout);
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+      hoverTimeout = setTimeout(closeSidebar, 300);
+    });
+
+    // Hamburger click
+    hamburgerToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+
+    // Overlay click
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Prevent closing when hovering hamburger
+    hamburgerToggle.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimeout);
+    });
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      if (!sidebar.classList.contains('open')) return;
+
+      if (window.innerWidth < 720) {
+        sidebarOverlay.classList.add('show');
+      } else {
+        sidebarOverlay.classList.remove('show');
+      }
+    });
+
+    // ================= CORE UI CONTROLS =================
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
+
+    function navigate(pageId) {
+      document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+      });
+
+      const target = document.getElementById('page-' + pageId);
+      if (target) {
+        target.classList.add('active');
+        if (pageId === 'packages') renderPackages();
+        if (pageId === 'wallets') renderWallets();
+        if (pageId === 'transactions') renderMpesaTable();
+      }
+
+      closeSidebar(); // auto close on mobile
+    }
+
+    // ================= THEME TOGGLE =================
+    const themeToggle = document.querySelector('.theme-toggle');
+    const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
+
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light');
+        if (themeIcon) themeIcon.className = 'fa fa-sun';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.body.classList.remove('light');
+        if (themeIcon) themeIcon.className = 'fa fa-moon';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+
+    // Toggle on click
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const isLight = document.body.classList.contains('light');
+        setTheme(isLight ? 'dark' : 'light');
+      });
+    }
+
+    // ================= TRANSACTIONS LOGIC =================
+    function renderMpesaTable() {
+      const tbody = document.getElementById("mpesaTable");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      let walletTotal = 0;
+      let monthlyTotal = 0;
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const today = now.toDateString();
+
+      mpesaTransactions.forEach(tx => {
+        const txDate = new Date(tx.datetime.replace(" ", "T"));
+
+        // wallet resets daily
+        if (txDate.toDateString() === today) {
+          walletTotal += tx.amount;
+        }
+
+        // monthly income
+        if (txDate.getMonth() === currentMonth) {
+          monthlyTotal += tx.amount;
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+      <td>${tx.mpesaId}</td>
+      <td>${tx.phone}</td>
+      <td><strong>${tx.amount}</strong></td>
+      <td>${tx.datetime}</td>
+      <td>${tx.walletId}</td>
+    `;
+        tbody.appendChild(tr);
+      });
+
+      const walletBalance = document.getElementById("walletBalance");
+      const monthlyIncome = document.getElementById("monthlyIncome");
+
+      if (walletBalance) walletBalance.innerText = `KES ${walletTotal}`;
+      if (monthlyIncome) monthlyIncome.innerText = `KES ${monthlyTotal}`;
+    }
+
+    function applyFilter() {
+      const fromValue = document.getElementById("fromDate").value;
+      const toValue = document.getElementById("toDate").value;
+
+      if (!fromValue || !toValue) return alert("Please select both dates");
+
+      const from = new Date(fromValue);
+      const to = new Date(toValue);
+      to.setHours(23, 59, 59, 999);
+
+      const filtered = mpesaTransactions.filter(tx => {
+        const d = new Date(tx.datetime.replace(" ", "T"));
+        return d >= from && d <= to;
+      });
+
+      renderFilteredTable(filtered);
+    }
+
+    function renderFilteredTable(data) {
+      const tbody = document.getElementById("mpesaTable");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      data.forEach(tx => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+      <td>${tx.mpesaId}</td>
+      <td>${tx.phone}</td>
+      <td>${tx.amount}</td>
+      <td>${tx.datetime}</td>
+      <td>${tx.walletId}</td>
+    `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("M-Pesa Statement", 14, 10);
+
+      let y = 20;
+      mpesaTransactions.forEach(t => {
+        doc.text(
+          `${t.mpesaId} | ${t.phone} | KES ${t.amount} | ${t.datetime}`,
+          14,
+          y
+        );
+        y += 8;
+        if (y > 280) { doc.addPage(); y = 20; }
+      });
+
+      doc.save("mpesa_statement.pdf");
+    }
+
+    // ================= WALLET SYSTEM =================
+    function toggleWalletFields() {
+      const type = document.getElementById('wType').value;
+      const container = document.getElementById('dynamicFields');
+
+      if (!container) return;
+
+      if (type === 'Bank') {
+        let bankOptions = Object.keys(bankData).map(b => `<option value="${b}">${b}</option>`).join('');
+        container.innerHTML = `
+      <label class="muted">Select Bank</label>
+      <select id="wBankName" onchange="updateBankPaybill()">
+        <option value="">-- Select Bank --</option>
+        ${bankOptions}
+        <option value="Other">Other (Manual Entry)</option>
+      </select>
+      <label class="muted" style="margin-top:10px; display:block;">Bank Paybill Number</label>
+      <input type="number" id="wBankPaybill" placeholder="Paybill will auto-fill" readonly>
+      <label class="muted" style="margin-top:10px; display:block;">Bank Account Number</label>
+      <input type="text" id="wBankAccount" placeholder="Enter your Account Number">`;
+      } else if (type === 'Paybill') {
+        container.innerHTML = `
+      <label class="muted">Store Number</label>
+      <input type="number" id="wStoreNumber" placeholder="123456">
+      <label class="muted" style="margin-top:10px; display:block;">Account Number</label>
+      <input type="text" id="wAccount" placeholder="ACC-001">`;
+      } else {
+        container.innerHTML = `<label class="muted">Till Number</label><input type="number" id="wTill">`;
+      }
+    }
+
+    function updateBankPaybill() {
+      const bankSelect = document.getElementById('wBankName');
+      const paybillInput = document.getElementById('wBankPaybill');
+
+      if (!bankSelect || !paybillInput) return;
+
+      if (bankSelect.value === "Other") {
+        paybillInput.value = "";
+        paybillInput.readOnly = false;
+        paybillInput.placeholder = "Enter Paybill Number";
+        paybillInput.style.border = "1px solid var(--orange)";
+      } else {
+        paybillInput.value = bankData[bankSelect.value] || "";
+        paybillInput.readOnly = true;
+        paybillInput.style.border = "1px solid rgba(255,255,255,0.1)";
+      }
+    }
+
+    function deleteWallet(id) {
+      if (confirm("Are you sure you want to delete this wallet?")) {
+        wallets = wallets.filter(w => w.id !== id);
+        renderWallets();
+      }
+    }
+
+    function submitNewWallet() {
+      const name = document.getElementById('wName').value;
+      const type = document.getElementById('wType').value;
+      if (!name) return alert("Please enter a wallet name");
+
+      let walletDetails = {
+        id: "WL-" + Math.floor(Math.random() * 1000),
+        name: name,
+        type: type,
+        balance: 0
+      };
+
+      if (type === 'Bank') {
+        walletDetails.bank = document.getElementById('wBankName').value;
+        walletDetails.paybill = document.getElementById('wBankPaybill').value;
+        walletDetails.account = document.getElementById('wBankAccount').value;
+      } else if (type === 'Paybill') {
+        walletDetails.paybill = document.getElementById('wStoreNumber').value;
+        walletDetails.account = document.getElementById('wAccount').value;
+      } else {
+        walletDetails.paybill = document.getElementById('wTill').value;
+      }
+
+      wallets.push(walletDetails);
+      renderWallets();
+      closeModal('modalCreateWallet');
+      document.getElementById('wName').value = "";
+    }
+
+    function renderWallets() {
+      const grid = document.getElementById("walletGrid");
+      if (!grid) return;
+
+      grid.innerHTML = wallets.map(w => `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="muted" style="font-size:10px; text-transform:uppercase;">${w.type} Wallet</div>
+        <button onclick="deleteWallet('${w.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+      <h3 style="margin:5px 0;">${w.name}</h3>
+      <div style="font-size:12px; color:var(--blue);">
+        ${w.type === 'Bank' ? `${w.bank} | Paybill: ${w.paybill} | Acc: ${w.account}` : ''}
+        ${w.type === 'Paybill' ? `Paybill: ${w.paybill} | Acc: ${w.account}` : ''}
+        ${w.type === 'BuyGoods' ? `Till: ${w.paybill}` : ''}
+      </div>
+      <div class="stat-large" style="margin-top:10px; color:var(--green);">KES ${w.balance.toLocaleString()}</div>
     </div>
-  </div>
-</div>
+  `).join('');
+    }
 
-<div id="modalBulkSms" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <h3>Send Bulk SMS</h3>
-    <label class="muted">Message</label>
-    <textarea id="smsText" placeholder="Enter your message..."></textarea>
-    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-accent" onclick="sendBulkSMS()">Send</button>
-      <button class="btn btn-ghost" onclick="closeModal('modalBulkSms')">Cancel</button>
+    // ================= HOTSPOT PACKAGE LOGIC =================
+    function toggleExpiryFields() {
+      const mode = document.getElementById('pExpiryMode').value;
+      const input = document.getElementById('pExpiryValue');
+      if (!input) return;
+
+      if (mode === 'Data') {
+        input.placeholder = "e.g. 1GB or 500MB";
+      } else if (mode === 'Fixed') {
+        input.placeholder = "e.g. 1H (Usage based)";
+      } else {
+        input.placeholder = "e.g. 24H (From first login)";
+      }
+    }
+
+    function submitNewPackage() {
+      const name = document.getElementById('pName').value;
+      const price = document.getElementById('pPrice').value;
+
+      if (!name || !price) return alert("Please fill in Plan Name and Price");
+
+      const activeDays = Array.from(document.querySelectorAll('.pDay:checked')).map(cb => cb.value);
+
+      const newPkg = {
+        id: "PKG-" + Math.floor(Math.random() * 10000),
+        name: name,
+        price: price,
+        mode: document.getElementById('pExpiryMode').value,
+        expiryVal: document.getElementById('pExpiryValue').value || "1GB",
+        speed: document.getElementById('pSpeed').value || "5",
+        devices: document.getElementById('pDevices').value || "1",
+        scope: document.getElementById('pScope').value,
+        activeDays: activeDays.length > 0 ? activeDays : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      };
+
+      hotspotPackages.push(newPkg);
+      renderPackages();
+      closeModal('modalAddPackage');
+
+      // Reset form fields
+      document.getElementById('pName').value = "";
+      document.getElementById('pPrice').value = "";
+      document.getElementById('pExpiryValue').value = "";
+      document.getElementById('pSpeed').value = "5";
+      document.getElementById('pDevices').value = "1";
+      document.querySelectorAll('.pDay').forEach(cb => cb.checked = true);
+    }
+
+    function renderPackages() {
+      const grid = document.getElementById("packageGrid");
+      if (!grid) return;
+
+      grid.innerHTML = hotspotPackages.map(p => `
+    <div class="card" style="border-left: 4px solid var(--blue);">
+      <div style="display:flex; justify-content:space-between; align-items: flex-start;">
+        <div>
+          <div class="muted" style="font-size:10px; text-transform:uppercase;">${p.mode} Plan</div>
+          <h3 style="margin:5px 0;">${p.name}</h3>
+        </div>
+        <button onclick="deletePackage('${p.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+      <div style="font-size:12px; margin: 10px 0;">
+        <div>Speed: ${p.speed} Mbps | Devices: ${p.devices}</div>
+        <div>Limit: ${p.expiryVal} | Scope: ${p.scope}</div>
+        <div>Days: ${p.activeDays.join(', ')}</div>
+      </div>
+      <div class="stat-large" style="color:var(--orange)">KES ${p.price}</div>
     </div>
-  </div>
-</div>
+  `).join('');
+    }
 
-<div id="modalTransactions" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <h3>Transactions</h3>
-    <table style="margin-top:10px"><thead><tr><th>Time</th><th>Transaction ID</th><th>Amount</th><th>Status</th></thead><tbody><tr><td>8:04</td><td>PHX0Z</td><td>Ksh 20</td><td>Completed</td></tr></tbody></table>
-    <div style="margin-top:10px"><button class="btn btn-ghost" onclick="closeModal('modalTransactions')">Close</button></div>
-  </div>
-</div>
+    function deletePackage(id) {
+      if (confirm("Delete this package?")) {
+        hotspotPackages = hotspotPackages.filter(p => p.id !== id);
+        renderPackages();
+      }
+    }
 
-<div id="modalWallet" class="modal-overlay" style="display:none;">
-  <div class="modal">
-    <h3>Wallet History</h3>
-    <table style="margin-top:8px"><thead><tr><th>Date</th><th>Amount</th></tr></thead><tbody><tr><td>2025-11-01</td><td>Ksh 10,000</td></tr></tbody></table>
-    <div style="margin-top:8px"><button class="btn btn-ghost" onclick="closeModal('modalWallet')">Close</button></div>
-  </div>
-</div>
+    // ================= PPPoE FUNCTIONS =================
+    function addPppoeUser() {
+      const name = document.getElementById('newPppUser').value.trim();
+      const plan = document.getElementById('newPppPlan').value;
+      if (!name) { alert('Enter username'); return; }
+      const tbody = document.getElementById('pppoeList');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${name}</td><td>${plan}</td><td>Active</td><td><button class="btn btn-ghost" onclick="openManagePppoe(this)">Manage</button><button class="btn btn-danger" onclick="deletePppoe(this)">Delete</button></td>`;
+      tbody.appendChild(tr);
+      document.getElementById('newPppUser').value = '';
+      closeModal('modalAddPppoe');
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// Sidebar functionality
-const sidebar = document.getElementById('sidebar');
-const main = document.getElementById('main');
-const hamburgerToggle = document.getElementById('hamburgerToggle');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
+    let _manageRow = null;
+    function openManagePppoe(btn) {
+      const tr = btn.closest('tr');
+      _manageRow = tr;
+      document.getElementById('managePppName').innerText = tr.children[0].innerText;
+      openModal('modalManagePppoe');
+    }
 
-let hoverTimeout;
+    function togglePppStatus() {
+      if (!_manageRow) return;
+      const c = _manageRow.children[2];
+      c.innerText = c.innerText === 'Active' ? 'Suspended' : 'Active';
+      closeModal('modalManagePppoe');
+    }
 
-function openSidebar() {
-  sidebar.classList.add('open');
-  main.classList.add('sidebar-open');
-  sidebarOverlay.classList.add('show');
-}
+    function deletePppoe(btn) {
+      if (!confirm('Delete this PPPoE user?')) return;
+      const tr = btn.closest('tr');
+      tr.parentNode.removeChild(tr);
+    }
 
-function closeSidebar() {
-  sidebar.classList.remove('open');
-  main.classList.remove('sidebar-open');
-  sidebarOverlay.classList.remove('show');
-  clearTimeout(hoverTimeout);
-}
+    function confirmDeletePpp() {
+      if (!confirm('Confirm delete?')) return;
+      if (_manageRow) {
+        _manageRow.parentNode.removeChild(_manageRow);
+        _manageRow = null;
+      }
+      closeModal('modalManagePppoe');
+    }
 
-// CURSOR DETECTION
-sidebar.addEventListener('mouseenter', () => {
-  clearTimeout(hoverTimeout);
-});
+    function sendBulkSMS() {
+      const t = document.getElementById('smsText').value.trim();
+      if (!t) { alert('Enter message'); return; }
+      alert('Queued: ' + (t.length > 40 ? t.slice(0, 40) + '...' : t));
+      closeModal('modalBulkSms');
+    }
 
-sidebar.addEventListener('mouseleave', () => {
-  hoverTimeout = setTimeout(closeSidebar, 300);
-});
+    // ================= CHARTS =================
+    window.addEventListener('load', () => {
+      const opt = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: document.body.classList.contains('light') ? '#0f1724' : '#bcd2ff',
+              maxRotation: 45,
+              minRotation: 45
+            }
+          },
+          y: {
+            ticks: {
+              color: document.body.classList.contains('light') ? '#0f1724' : '#bcd2ff'
+            }
+          }
+        }
+      };
 
-// Hamburger click
-hamburgerToggle.addEventListener('click', (e) => {
-  e.stopPropagation();
-  if (sidebar.classList.contains('open')) {
-    closeSidebar();
-  } else {
-    openSidebar();
-  }
-});
+      // Monthly chart
+      const monthlyCanvas = document.getElementById('chartMonthlyCanvas');
+      if (monthlyCanvas) {
+        new Chart(monthlyCanvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+              label: 'Income',
+              data: [120000, 130000, 115000, 140000, 150000, 160000, 170000, 180000, 165000, 190000, 200000, 210000],
+              borderColor: 'rgba(255,127,0,1)',
+              backgroundColor: 'rgba(255,127,0,0.08)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: opt
+        });
+      }
 
-// Overlay click
-sidebarOverlay.addEventListener('click', closeSidebar);
+      // Weekly chart
+      const weeklyCanvas = document.getElementById('chartWeeklyCanvas');
+      if (weeklyCanvas) {
+        new Chart(weeklyCanvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              data: [7000, 8000, 6000, 12000, 10000, 9000, 4800],
+              backgroundColor: 'rgba(0,82,204,0.9)'
+            }]
+          },
+          options: opt
+        });
+      }
 
-// Prevent closing when hovering hamburger
-hamburgerToggle.addEventListener('mouseenter', () => {
-  clearTimeout(hoverTimeout);
-});
+      // Daily 24 hours chart
+      const dailyCanvas = document.getElementById('chartDailyCanvas');
+      if (dailyCanvas) {
+        const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+        new Chart(dailyCanvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: hours.slice(-12),
+            datasets: [{
+              data: hours.slice(-12).map(() => Math.floor(Math.random() * 1200) + 200),
+              backgroundColor: 'rgba(255,127,0,0.95)'
+            }]
+          },
+          options: opt
+        });
+      }
 
-// Resize handler
-window.addEventListener('resize', () => {
-  if (!sidebar.classList.contains('open')) return;
-  
-  if (window.innerWidth < 720) {
-    sidebarOverlay.classList.add('show');
-  } else {
-    sidebarOverlay.classList.remove('show');
-  }
-});
+      // Usage chart
+      const usageCanvas = document.getElementById('chartUsageCanvas');
+      if (usageCanvas) {
+        const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+        const usage = hours.slice(-12).map((_, i) => Math.floor(Math.sin(i / 3) * 50 + Math.random() * 70 + 80));
+        new Chart(usageCanvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: hours.slice(-12),
+            datasets: [{
+              data: usage,
+              borderColor: 'rgba(0,82,204,1)',
+              backgroundColor: 'rgba(0,82,204,0.06)',
+              pointRadius: 2,
+              tension: 0.3
+            }]
+          },
+          options: opt
+        });
+      }
 
-// Modal functions
-function openModal(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.style.display = 'flex';
-}
+      // Router health chart
+      const healthCanvas = document.getElementById('chartHealthCanvas');
+      if (healthCanvas) {
+        new Chart(healthCanvas.getContext('2d'), {
+          type: 'radar',
+          data: {
+            labels: ['CPU', 'Memory', 'Uptime', 'Connections', 'Packet Loss'],
+            datasets: [{
+              label: 'Router A',
+              data: [80, 65, 99, 60, 5],
+              borderColor: 'rgba(0,82,204,1)',
+              backgroundColor: 'rgba(0,82,204,0.08)'
+            }, {
+              label: 'Router B',
+              data: [60, 45, 95, 50, 15],
+              borderColor: 'rgba(217,83,79,1)',
+              backgroundColor: 'rgba(217,83,79,0.08)'
+            }]
+          },
+          options: {
+            ...opt,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
 
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.style.display = 'none';
-}
+      // Initialize data
+      renderWallets();
+      renderPackages();
+      renderMpesaTable();
 
-// PPPoE functions
-function addPppoeUser() {
-  const name = document.getElementById('newPppUser').value.trim();
-  const plan = document.getElementById('newPppPlan').value;
-  if (!name) { alert('Enter username'); return; }
-  const tbody = document.getElementById('pppoeList');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td>${name}</td><td>${plan}</td><td>Active</td><td><button class="btn btn-ghost" onclick="openManagePppoe(this)">Manage</button><button class="btn btn-danger" onclick="deletePppoe(this)">Delete</button></td>`;
-  tbody.appendChild(tr);
-  document.getElementById('newPppUser').value = '';
-  closeModal('modalAddPppoe');
-}
-
-let _manageRow = null;
-function openManagePppoe(btn) {
-  const tr = btn.closest('tr');
-  _manageRow = tr;
-  document.getElementById('managePppName').innerText = tr.children[0].innerText;
-  openModal('modalManagePppoe');
-}
-
-function togglePppStatus() {
-  if (!_manageRow) return;
-  const c = _manageRow.children[2];
-  c.innerText = c.innerText === 'Active' ? 'Suspended' : 'Active';
-  closeModal('modalManagePppoe');
-}
-
-function deletePppoe(btn) {
-  if (!confirm('Delete this PPPoE user?')) return;
-  const tr = btn.closest('tr');
-  tr.parentNode.removeChild(tr);
-}
-
-function confirmDeletePpp() {
-  if (!confirm('Confirm delete?')) return;
-  if (_manageRow) {
-    _manageRow.parentNode.removeChild(_manageRow);
-    _manageRow = null;
-  }
-  closeModal('modalManagePppoe');
-}
-
-function sendBulkSMS() {
-  const t = document.getElementById('smsText').value.trim();
-  if (!t) { alert('Enter message'); return; }
-  alert('Queued: ' + (t.length > 40 ? t.slice(0, 40) + '...' : t));
-  closeModal('modalBulkSms');
-}
-
-// Charts
-window.addEventListener('load', () => {
-  const opt = { 
-    responsive: true, 
-    maintainAspectRatio: false, 
-    plugins: { legend: { display: false } }, 
-    scales: { 
-      x: { ticks: { color: '#bcd2ff', maxRotation: 45, minRotation: 45 } }, 
-      y: { ticks: { color: '#bcd2ff' } } 
-    } 
-  };
-  
-  // Monthly
-  new Chart(document.getElementById('chartMonthlyCanvas').getContext('2d'), { 
-    type: 'line', 
-    data: { 
-      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], 
-      datasets: [{
-        label: 'Income', 
-        data: [120000,130000,115000,140000,150000,160000,170000,180000,165000,190000,200000,210000], 
-        borderColor: 'rgba(255,127,0,1)', 
-        backgroundColor: 'rgba(255,127,0,0.08)', 
-        fill: true, 
-        tension: 0.3 
-      }] 
-    }, 
-    options: opt 
-  });
-  
-  // Weekly
-  new Chart(document.getElementById('chartWeeklyCanvas').getContext('2d'), { 
-    type: 'bar', 
-    data: { 
-      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], 
-      datasets: [{ 
-        data: [7000,8000,6000,12000,10000,9000,4800], 
-        backgroundColor: 'rgba(0,82,204,0.9)' 
-      }] 
-    }, 
-    options: opt 
-  });
-  
-  // Daily 24 hours
-  const hours = Array.from({length:24}, (_,i) => String(i).padStart(2,'0'));
-  new Chart(document.getElementById('chartDailyCanvas').getContext('2d'), { 
-    type: 'bar', 
-    data: { 
-      labels: hours.slice(-12), // Show last 12 hours on mobile
-      datasets: [{ 
-        data: hours.slice(-12).map(() => Math.floor(Math.random()*1200)+200), 
-        backgroundColor: 'rgba(255,127,0,0.95)' 
-      }] 
-    }, 
-    options: opt 
-  });
-  
-  // Usage
-  const usage = hours.slice(-12).map((_,i) => Math.floor(Math.sin(i/3)*50 + Math.random()*70 + 80));
-  new Chart(document.getElementById('chartUsageCanvas').getContext('2d'), { 
-    type: 'line', 
-    data: { 
-      labels: hours.slice(-12), 
-      datasets: [{ 
-        data: usage, 
-        borderColor: 'rgba(0,82,204,1)', 
-        backgroundColor: 'rgba(0,82,204,0.06)', 
-        pointRadius: 2, 
-        tension: 0.3 
-      }] 
-    }, 
-    options: opt 
-  });
-  
-  // Router health
-  new Chart(document.getElementById('chartHealthCanvas').getContext('2d'), { 
-    type: 'radar', 
-    data: { 
-      labels: ['CPU','Memory','Uptime','Connections','Packet Loss'], 
-      datasets: [{ 
-        label: 'Router A', 
-        data: [80,65,99,60,5], 
-        borderColor: 'rgba(0,82,204,1)', 
-        backgroundColor: 'rgba(0,82,204,0.08)' 
-      }, {
-        label: 'Router B', 
-        data: [60,45,95,50,15], 
-        borderColor: 'rgba(217,83,79,1)', 
-        backgroundColor: 'rgba(217,83,79,0.08)' 
-      }] 
-    }, 
-    options: { 
-      ...opt, 
-      plugins: { legend: { position: 'bottom' } } 
-    } 
-  });
-});
-// THEME TOGGLE
-const themeToggle = document.querySelector('.theme-toggle');
-const themeIcon = themeToggle.querySelector('i');
-
-function setTheme(theme){
-  if(theme === 'light'){
-    document.body.classList.add('light');
-    themeIcon.className = 'fa fa-sun';
-    localStorage.setItem('theme', 'light');
-  } else {
-    document.body.classList.remove('light');
-    themeIcon.className = 'fa fa-moon';
-    localStorage.setItem('theme', 'dark');
-  }
-}
-
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'dark';
-setTheme(savedTheme);
-
-// Toggle on click
-themeToggle.addEventListener('click', () => {
-  const isLight = document.body.classList.contains('light');
-  setTheme(isLight ? 'dark' : 'light');
-});
-
-</script>
+      // Check if we need to show packages page by default
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = urlParams.get('page');
+      if (page) {
+        navigate(page);
+      }
+    });
+  </script>
 </body>
+
 </html>
