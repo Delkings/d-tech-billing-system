@@ -1506,7 +1506,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // ================= GLOBAL STATE =================
+    //  GLOBAL STATE 
     let wallets = [];
     let hotspotPackages = [];
     let mpesaTransactions = [
@@ -1545,7 +1545,7 @@
       { id: "WL-001", name: "Main Bank Account", type: "Bank", balance: 10000, bank: "KCB Bank", paybill: "522522", account: "12345678" }
     ];
 
-    // ================= SIDEBAR FUNCTIONALITY =================
+    //  SIDEBAR FUNCTIONALITY 
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
     const hamburgerToggle = document.getElementById('hamburgerToggle');
@@ -1604,7 +1604,7 @@
       }
     });
 
-    // ================= CORE UI CONTROLS =================
+    //  CORE UI CONTROLS 
     function openModal(id) {
       const el = document.getElementById(id);
       if (!el) return;
@@ -1633,7 +1633,7 @@
       closeSidebar(); // auto close on mobile
     }
 
-    // ================= THEME TOGGLE =================
+    //  THEME TOGGLE 
     const themeToggle = document.querySelector('.theme-toggle');
     const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
 
@@ -1661,7 +1661,7 @@
       });
     }
 
-    // ================= TRANSACTIONS LOGIC =================
+    //  TRANSACTIONS LOGIC 
     function renderMpesaTable() {
       const tbody = document.getElementById("mpesaTable");
       if (!tbody) return;
@@ -1759,7 +1759,7 @@
       doc.save("mpesa_statement.pdf");
     }
 
-    // ================= WALLET SYSTEM =================
+    //  WALLET SYSTEM 
     function toggleWalletFields() {
       const type = document.getElementById('wType').value;
       const container = document.getElementById('dynamicFields');
@@ -1867,7 +1867,7 @@
   `).join('');
     }
 
-    // ================= HOTSPOT PACKAGE LOGIC =================
+    //  HOTSPOT PACKAGE LOGIC 
     function toggleExpiryFields() {
       const mode = document.getElementById('pExpiryMode').value;
       const input = document.getElementById('pExpiryValue');
@@ -1947,7 +1947,7 @@
       }
     }
 
-    // ================= ROUTER SETUP FUNCTIONALITY =================
+    //  ROUTER SETUP FUNCTIONALITY 
 
     // Update router test status on dashboard
     function updateRouterTestStatus(status, message = "") {
@@ -2415,7 +2415,7 @@ echo "Configuration complete!";
       });
     }
 
-    // ================= PPPoE FUNCTIONS =================
+    //  PPPoE FUNCTIONS 
     function addPppoeUser() {
       const name = document.getElementById('newPppUser').value.trim();
       const plan = document.getElementById('newPppPlan').value;
@@ -2465,7 +2465,7 @@ echo "Configuration complete!";
       closeModal('modalBulkSms');
     }
 
-    // ================= CHARTS =================
+    //  CHARTS 
     window.addEventListener('load', () => {
       const opt = {
         responsive: true,
