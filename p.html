@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WiFi Hotspot - D-TECH Dark</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+/* --- THEME VARIABLES FROM STYLE.CSS --- */
+:root {
+  --blue: #0052cc;
+  --orange: #ff7f00;
+  --bg: #071026;
+  --card: #0f1724;
+  --text: #eaf2ff;
+  --green: #2bd67b;
+  --gradient: linear-gradient(90deg, #0057D9, #FF3B3F);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: var(--bg); /* Dark background from style.css */
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.portal {
+  background: var(--card); /* Darker card color from style.css */
+  width: 90%;
+  max-width: 480px;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.header-banner {
+  padding: 18px;
+  text-align: center;
+  background: var(--gradient);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.content-padding {
+  padding: 24px;
+}
+
+/* --- PACKAGES --- */
+.packages {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.package {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: .3s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.package:hover {
+  transform: translateY(-5px);
+  border-color: var(--orange);
+  background: rgba(255,255,255,0.05);
+}
+
+.price {
+  background: var(--orange);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 10px;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.pkg-title { font-weight: bold; color: var(--text); font-size: 16px; }
+.pkg-desc { font-size: 13px; color: var(--green); margin: 4px 0; }
+.pkg-speed { font-size: 11px; color: rgba(234, 242, 255, 0.6); }
+
+/* --- CUSTOMER CARE (Moved after packages) --- */
+.support {
+  text-align: center;
+  margin: 20px 0;
+  padding: 12px;
+  background: rgba(0, 82, 204, 0.1);
+  border-radius: 10px;
+  font-size: 14px;
+}
+.support a { color: var(--orange); font-weight: bold; text-decoration: none; }
+
+/* --- MPESA PASTE AREA --- */
+.mpesa-paste-box {
+  background: rgba(255, 127, 0, 0.05);
+  border: 1px dashed var(--orange);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+textarea {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 10px;
+}
+
+/* --- BUTTONS & INPUTS --- */
+.login input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: opacity 0.2s;
+}
+
+.btn-orange { background: var(--orange); }
+.btn-primary:hover { opacity: 0.9; }
+
+/* --- MODAL --- */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: var(--card);
+  padding: 25px;
+  width: 85%;
+  max-width: 360px;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (orientation:landscape) {
+  .packages { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="portal">
+  <div class="header-banner">D-TECH Hotspot Portal</div>
+
+  <div class="content-padding">
+    <div class="packages">
+      <div class="package" onclick="openPay('1 Hour - KES 30')">
+        <div class="price">KES 30</div>
+        <div class="pkg-title">1 Hour</div>
+        <div class="pkg-desc">Unlimited</div>
+        <div class="pkg-speed">Max 2 Mbps</div>
+      </div>
+
+      <div class="package" onclick="openPay('2 Hours - KES 50')">
+        <div class="price">KES 50</div>
+        <div class="pkg-title">2 Hours</div>
+        <div class="pkg-desc">Unlimited</div>
+        <div class="pkg-speed">Max 2 Mbps</div>
+      </div>
+    </div>
+
+    <div class="support">
+      <i class="fa fa-headset" style="margin-right: 8px;"></i> Support: 
+      <a href="tel:0700123456">0700 123 456</a>
+    </div>
+
+    <div class="mpesa-paste-box">
+      <h5 style="margin: 0 0 8px; color: var(--orange);">Connection Failed?</h5>
+      <textarea id="mpesaMsg" rows="2" placeholder="Paste M-PESA message here..."></textarea>
+      <button class="btn-primary btn-orange" style="padding: 10px; margin: 0;" onclick="verifyMpesa()">Activate Manually</button>
+    </div>
+
+    <div class="login" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+      <p style="font-size: 13px; margin-bottom: 5px; opacity: 0.8;">Returning User Login:</p>
+      <input placeholder="Username">
+      <input type="password" placeholder="Password">
+      <button class="btn-primary">Login to WiFi</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="payModal">
+  <div class="modal-box">
+    <h4 id="pkgName" style="color: var(--text); margin-top: 0;">Package Name</h4>
+    <p style="font-size: 13px; opacity: 0.7;">Enter M-PESA number for STK Push</p>
+    <input type="number" id="phone" placeholder="0712345678" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+    <button class="btn-primary" onclick="payNow()">Pay Now</button>
+    <button class="btn-primary" onclick="closePay()" style="background:rgba(255,255,255,0.05); color:white; border: 1px solid rgba(255,255,255,0.1);">Cancel</button>
+  </div>
+</div>
+
+<script>
+function openPay(pkg) {
+  document.getElementById("pkgName").innerText = pkg;
+  document.getElementById("payModal").style.display = "flex";
+}
+
+function closePay() {
+  document.getElementById("payModal").style.display = "none";
+}
+
+function payNow() {
+  const phone = document.getElementById("phone").value;
+  if(!phone) return alert("Please enter your M-PESA number");
+  alert("STK Push initiated to " + phone);
+  closePay();
+}
+
+function verifyMpesa() {
+  const msg = document.getElementById("mpesaMsg").value;
+  if(msg.length < 15) return alert("Please paste the full M-PESA message.");
+  alert("Verifying transaction code. Please wait...");
+}
+</script>
+
+</body>
+</html>

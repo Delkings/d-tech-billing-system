@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>demo|isp dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- TOP LEFT FIXED HAMBURGER -->
+  <div class="hamburger-container" id="hamburgerToggle">
+    <div class="hamburger"></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+     <img src="logo.png" alt="brand" style="width:100%;border-radius:8px;margin-bottom:10px;max-height:60px;object-fit:cover">
+        
+   <h3 id="dynamic-greeting">Good Morning ☀️<br>demo User!</h3>
+!</h3> </div>
+
+      <p style="margin:6px 0 0; font-size:13px; color:rgba(0,0,0,0.6)">Your courage builds success!</p>
+    </div>
+
+    <a class="nav-item" href="#" onclick="navigate('dashboard')">
+      <span class="icon"><i class="fa fa-home"></i></span>
+      Dashboard
+    </a>
+<a class="nav-item" href="#" onclick="navigate('analytics')">
+  <span class="icon"><i class="fa fa-chart-line"></i></span>
+  Analytics
+</a>
+    <div class="nav-group">
+      <div class="nav-title">Finance</div>
+      <a class="nav-item" href="#" onclick="navigate('transactions')">
+        <i class="fa fa-credit-card"></i> Transactions
+      </a>
+      <a class="nav-item" href="#" onclick="navigate('income')">
+  <span class="icon"><i class="fa fa-chart-line"></i></span> 
+  Income
+</a>
+    </div>
+     <div class="nav-group">
+  <div class="nav-title">Messages</div>
+  <a class="nav-item" href="#" onclick="navigate('notifications')">
+    <span class="icon"><i class="fa fa-bell"></i></span>
+    Notifications <span class="badge-new" id="notif-count">3</span>
+</div>
+
+    </div>
+<div class="nav-group">
+  <div class="nav-title">Bulk SMS</div>
+  <a class="nav-item" href="#" onclick="navigate('bulk-sms')">
+    <span class="icon"><i class="fa fa-mail-bulk"></i></span> Bulk SMS
+  </a>
+  <a class="nav-item" href="#" onclick="navigate('sms-config')">
+    <span class="icon"><i class="fa fa-cogs"></i></span> Configure SMS Gateway
+  </a>
+</div>
+
+     <div class="nav-group">
+  <div class="nav-title">Hotspot</div>
+  <a class="nav-item" href="#" onclick="navigate('packages')">
+    <span class="icon"><i class="fa fa-box"></i></span> Packages
+  </a>
+  <a class="nav-item" href="#" onclick="navigate('vouchers')">
+    <span class="icon"><i class="fa fa-ticket-alt"></i></span> Vouchers
+  </a>
+ <a class="nav-item" href="#" onclick="navigate('hotspot-users')">
+  <span class="icon"><i class="fa fa-user-plus"></i></span> Add User
+  </a>
+  
+</div>
+
+    <div class="nav-group">
+  <div class="nav-title">PPPoE</div>
+  <a class="nav-item" href="#" onclick="navigate('pppoe-plans')">
+    <span class="icon"><i class="fa fa-signal"></i></span> Plans
+  </a>
+  <a class="nav-item" href="#" onclick="navigate('pppoe-users')">
+    <span class="icon"><i class="fa fa-users"></i></span> Users
+  </a>
+</div>
+
+
+    <div class="nav-group">
+      <div class="nav-title">Routers & Devices</div>
+     <a class="nav-item" href="#" onclick="navigate('stations')">
+    <span class="icon"><i class="fa fa-wifi"></i></span> Stations
+  </a>
+  
+      </a>
+      <a class="nav-item" href="#" onclick="navigate('router-setup')">
+        <span class="icon"><i class="fa fa-cog"></i></span> Router Setup
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Payment Gateway</div>
+      <a class="nav-item" href="#" onclick="navigate('wallets')">
+        <i class="fa fa-wallet"></i> Wallets
+      </a>
+    </div>
+
+    <div class="nav-group">
+  <div class="nav-title">Roaming</div>
+  <a class="nav-item" href="#" onclick="navigate('remote-mgmt')">
+    <span class="icon"><i class="fa fa-network-wired"></i></span> 
+    Remote Management
+  </a>
+</div>
+
+    <div class="nav-group">
+  <div class="nav-title">System</div>
+  <a class="nav-item" href="#" onclick="navigate('settings')">
+    <span class="icon"><i class="fa fa-wrench"></i></span> Settings
+  </a>
+  </div>
+     <div class="nav-group">
+  <div class="nav-title">System</div>
+  <a class="nav-item" href="#" onclick="navigate('logs')">
+    <span class="icon"><i class="fa fa-history"></i></span> Logs
+  </a>
+</div>
+<div class="sidebar-footer" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+  <a class="nav-item" href="#" onclick="handleLogout()" style="color: var(--red);">
+    <span class="icon"><i class="fa fa-sign-out-alt"></i></span> 
+    Logout
+  </a>
+  </div>
+  </aside>
+  
+
+  <!-- OVERLAY -->
+  <div id="sidebarOverlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main">
+    <!-- DASHBOARD PAGE -->
+    <section id="page-dashboard" class="page active">
+      <div class="topbar">
+        <div class="title">Welcome to DELTECH-ISP</div>
+        <div class="top-controls">
+          <div class="wallet-info">
+            <i class="fa fa-wallet"></i>
+            <span>KES 0</span>
+          </div>
+          <button class="btn btn-topup" onclick="openModal('modalTopUp')">Top Up</button>
+          <div class="theme-toggle">
+            <i class="fa fa-moon"></i>
+          </div>
+        </div>
+      </div>
+
+      <section class="grid-4">
+        <div class="card">
+          <h4>Account Information</h4>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="font-weight:800;font-size:16px">DELTECH NETWORKS</div>
+              <div class="muted">Active • Monthly Income: KES 0</div>
+              <div style="margin-top:8px"><span class="chip"
+                  style="background:rgba(0,0,0,0.25);padding:6px;border-radius:8px;color:#fff">Trial: 7 days left</span>
+              </div>
+            </div>
+            <div>
+              <div
+                style="background:rgba(0,0,0,0.18);padding:10px;border-radius:8px;color:var(--orange);font-weight:800">
+                Pay</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Invoices</h4>
+          <div class="stat-large">0 <span class="muted" style="font-size:14px">Generated</span></div>
+        </div>
+
+        <div class="card">
+          <h4>Transaction Wallet</h4>
+          <div class="stat-large" style="color:var(--orange)">0</div>
+          <div class="muted">Top Up</div>
+        </div>
+
+        <div class="card">
+          <h4>SMS Balance</h4>
+          <div class="stat-large" style="color:var(--blue)">0</div>
+          <div class="muted">This month: 0 sent</div>
+        </div>
+
+        <div class="card">
+          <h4>Hotspot Clients</h4>
+          <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;">
+              <div style="font-weight:800;color:var(--orange)">0</div>
+              <div class="muted">Active</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:120px;">
+              <div style="font-weight:800;color:var(--red)">0</div>
+              <div class="muted">Total</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>PPPoE Clients</h4>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--blue)">0</div>
+              <div class="muted">Active</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--orange)">0</div>
+              <div class="muted">Inactive</div>
+            </div>
+            <div class="card" style="padding:12px;background:rgba(0,0,0,0.12);flex:1;min-width:90px;">
+              <div style="font-weight:800;color:var(--red)">0</div>
+              <div class="muted">Total</div>
+            </div>
+          </div>
+          <div class="muted" style="margin-top:8px">Monthly Charge: KES 0</div>
+        </div>
+
+        <!-- Router Test Status Card -->
+        <div class="card" id="routerTestStatusCard">
+          <h4>Router Test Status</h4>
+          <div class="test-status test-running" id="routerTestStatus">
+            <i class="fa fa-sync fa-spin"></i>
+            <span>Test Not Run</span>
+          </div>
+          <div class="muted" style="margin-top:8px">Last test: Not run yet</div>
+          <button class="btn btn-primary" style="margin-top:12px" onclick="runQuickRouterTest()">
+            <i class="fa fa-play"></i> Run Quick Test
+          </button>
+        </div>
+      </section>
+      <!-- main two column -->
+      <section class="two-col">
+        <div>
+          <div class="card">
+            <h4>Monthly Income (Last 12 months)</h4>
+            <div class="chart" id="chartMonthly"><canvas id="chartMonthlyCanvas"></canvas></div>
+          </div>
+
+          <div class="small-grid">
+            <div class="card">
+              <h4>Weekly Income</h4>
+              <div class="chart"><canvas id="chartWeeklyCanvas"></canvas></div>
+            </div>
+            <div class="card">
+              <h4>Daily Sales (24 hours)</h4>
+              <div class="chart"><canvas id="chartDailyCanvas"></canvas></div>
+            </div>
+          </div>
+
+          <div class="small-grid">
+            <div class="card">
+              <h4>Usage Patterns (hours)</h4>
+              <div class="chart"><canvas id="chartUsageCanvas"></canvas></div>
+            </div>
+            <div class="card">
+              <h4>Router Health</h4>
+              <div class="chart"><canvas id="chartHealthCanvas"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="widget card">
+            <h4>Hotspot Users</h4>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div style="font-weight:800;color:var(--orange)">0</div>
+                <div class="muted">Active / Total</div>
+              </div>
+              <div><button class="btn btn-accent" onclick="openModal('modalHotspot')">Manage</button></div>
+            </div>
+            <table style="margin-top:10px">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>client1</td>
+                  <td>active</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="widget card">
+            <h4>Transactions</h4>
+            <div class="muted">Latest payments</div>
+            <table style="margin-top:8px">
+              <thead>
+                <tr>
+                  <th>Voucher</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PHX0Z</td>
+                  <td>Ksh 20</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:8px"><button class="btn btn-accent" onclick="openModal('modalTransactions')">View
+                All</button></div>
+          </div>
+
+          <div class="widget card">
+            <h4>Wallet</h4>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <div style="font-weight:800;color:var(--orange)">KES 0</div>
+              <div class="muted">Mpesa linked</div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;width:100%;">
+              <button class="btn btn-primary" onclick="openModal('modalWallet')">History</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+      
+
+      <!-- PPPoE table -->
+      <section class="card full-width">
+        <h4>PPPoE Users</h4>
+        <div class="muted">Manage PPPoE user stations</div>
+        <table style="margin-top:10px">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pppoeList">
+            <tr>
+              <td>pppoe_user1</td>
+              <td>Plan B</td>
+              <td>Active</td>
+              <td>
+                <button class="btn btn-ghost" onclick="openManagePppoe(this)">Manage</button>
+                <button class="btn btn-danger" onclick="deletePppoe(this)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- TRANSACTIONS PAGE -->
+    <section id="page-transactions" class="page">
+      <div class="topbar">
+        <div class="title">Transactions</div>
+        <div class="top-controls">
+          <button class="btn" onclick="exportPDF()">Export PDF</button>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <h4>Monthly Income</h4>
+          <div class="stat-large" id="monthlyIncome">KES 0</div>
+          <div class="muted">Current month</div>
+        </div>
+        <div class="card">
+          <h4>Transaction Wallet</h4>
+          <div class="stat-large" style="color:var(--orange)" id="walletBalance">KES 0</div>
+          <div class="muted">Resets daily at 00:00</div>
+        </div>
+      </div>
+
+      <div class="card full-width" style="margin-top: 15px;">
+        <div class="filters" style="display:flex; gap:10px; margin-bottom:15px;">
+          <input type="date" id="fromDate">
+          <input type="date" id="toDate">
+          <button class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>M-Pesa ID</th>
+              <th>Phone No</th>
+              <th>Amount (KES)</th>
+              <th>Date & Time</th>
+              <th>Wallet ID</th>
+            </tr>
+          </thead>
+          <tbody id="mpesaTable"></tbody>
+        </table>
+      </div>
+    </section>
+    <!-- BULK SMS SECTION-->
+    <section id="page-bulk-sms" class="page">
+  <div class="topbar">
+    <div class="title">Bulk SMS Service</div>
+    <div class="top-controls">
+      <div class="wallet-info">
+        <i class="fa fa-comment"></i>
+        <span>Balance: 540 SMS</span>
+      </div>
+      <button class="btn btn-primary">Buy Credits</button>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h4>Compose New Message</h4>
+      <div style="margin-top: 15px;">
+        <label class="muted">Sender ID / Phone</label>
+        <select>
+          <option>DELTECH-ISP</option>
+          <option>SYSTEM-MSG</option>
+        </select>
+        
+        <label class="muted" style="margin-top: 10px; display: block;">Recipients (Comma separated or upload CSV)</label>
+        <textarea placeholder="e.g. 254700000000, 254711111111" style="height: 100px;"></textarea>
+        
+        <label class="muted" style="margin-top: 10px; display: block;">Your Message</label>
+        <textarea id="smsBody" placeholder="Type your message here..." style="height: 120px;" onkeyup="countSMS()"></textarea>
+        <div class="muted" style="text-align: right; margin-top: 5px;">
+          <span id="charCount">0</span>/160 characters (<span id="smsCount">0</span> SMS)
+        </div>
+        
+        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="sendMessage()">
+  <i class="fa fa-paper-plane"></i> Send Message 
+</button>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card widget">
+        <h4>SMS Statistics</h4>
+        <div class="small-grid" style="grid-template-columns: 1fr;">
+          <div style="padding: 10px; background: rgba(0,0,0,0.1); border-radius: 8px;">
+            <div class="muted">Sent Today</div>
+            <div class="stat-large" style="color: var(--blue)">128</div>
+          </div>
+          <div style="padding: 10px; background: rgba(0,0,0,0.1); border-radius: 8px; margin-top: 10px;">
+            <div class="muted">Failed</div>
+            <div class="stat-large" style="color: var(--red)">2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card widget">
+        <h4>Quick Templates</h4>
+        <div class="nav-item" style="font-size: 12px; margin: 5px 0;" onclick="applyTemplate('expiry')">
+          <i class="fa fa-clock"></i> Account Expiry Warning
+        </div>
+        <div class="nav-item" style="font-size: 12px; margin: 5px 0;" onclick="applyTemplate('welcome')">
+          <i class="fa fa-user-check"></i> New Client Welcome
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+    <!-- INCOME SECTION -->
+    <section id="page-income" class="page">
+  <div class="topbar">
+    <div class="title">Income Overview</div>
+    <div class="top-controls">
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fa fa-print"></i> Print Report
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="muted">Yearly Income</div>
+      <div class="stat-large" style="color: var(--green)">KES 1,240,000</div>
+      <div class="muted" style="margin-top: 5px;">
+        <i class="fa fa-calendar"></i> Jan - Dec 2024
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="muted">Monthly Income</div>
+      <div class="stat-large" style="color: var(--blue)">KES 105,000</div>
+      <div class="muted" style="margin-top: 5px;">
+        <i class="fa fa-chart-bar"></i> Current Month
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="muted">Weekly Income</div>
+      <div class="stat-large" style="color: var(--orange)">KES 24,500</div>
+      <div class="muted" style="margin-top: 5px;">
+        <i class="fa fa-clock"></i> Last 7 Days
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="muted">Daily Income</div>
+      <div class="stat-large">KES 3,800</div>
+      <div class="muted" style="margin-top: 5px;">
+        <i class="fa fa-sun"></i> Today's Sales
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-width" style="margin-top: 20px;">
+    <h4>Recent Income History</h4>
+    <table style="margin-top:10px">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Total Transactions</th>
+          <th>Gross Income</th>
+          <th>Net Growth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>December 2024</td>
+          <td>452</td>
+          <td>KES 112,000</td>
+          <td style="color: var(--green)">+12%</td>
+        </tr>
+        <tr>
+          <td>November 2024</td>
+          <td>398</td>
+          <td>KES 98,500</td>
+          <td style="color: var(--green)">+5%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<!-- REMOTE MANAGEMENT-->
+
+<section id="page-notifications" class="page">
+  <div class="topbar">
+    <div class="title">System Notifications</div>
+    <div class="top-controls">
+      <button class="btn btn-ghost" onclick="clearNotifications()">Mark all as read</button>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div id="notifications-list">
+      </div>
+  </div>
+</section>
+<section id="page-remote-mgmt" class="page">
+  <div class="topbar">
+    <div class="title">Remote Management</div>
+    <div class="top-controls">
+      <button class="btn btn-primary" onclick="openModal('modalAddTunnel')">
+        <i class="fa fa-plus"></i> New Tunnel
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between;">
+        <h4>Winbox Access</h4>
+        <span class="test-status test-success">Enabled</span>
+      </div>
+      <div class="stat-large">Port 8291</div>
+      <div class="muted">Secure access via system-winbox</div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between;">
+        <h4>API (SSL)</h4>
+        <span class="test-status test-success">Active</span>
+      </div>
+      <div class="stat-large">Port 8729</div>
+      <div class="muted">Connected to Deltech Cloud</div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between;">
+        <h4>Active VPNs</h4>
+        <span class="test-status test-running">2 Active</span>
+      </div>
+      <div class="stat-large">SSTP/L2TP</div>
+      <div class="muted">Uptime: 14h 22m</div>
+    </div>
+  </div>
+
+  <div class="card full-width" style="margin-top: 20px;">
+    <h4>Remote Access Tunnels (VPN)</h4>
+    <div class="muted" style="margin-bottom: 15px;">Secure links to remote client routers</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Client Name</th>
+          <th>Protocol</th>
+          <th>Remote IP</th>
+          <th>Uptime</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Station_A_Mikrotik</td>
+          <td>SSTP</td>
+          <td>10.10.0.5</td>
+          <td>02:15:10</td>
+          <td><span class="test-status test-success">Online</span></td>
+          <td>
+            <button class="btn btn-ghost" title="Winbox Link"><i class="fa fa-external-link-alt"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>Site_B_Edge</td>
+          <td>WireGuard</td>
+          <td>10.10.0.12</td>
+          <td>--</td>
+          <td><span class="test-status test-failed">Offline</span></td>
+          <td>
+            <button class="btn btn-ghost"><i class="fa fa-sync"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<!-- SETTINGS SECTION-->
+<section id="page-settings" class="page">
+  <div class="topbar">
+    <div class="title">System Settings</div>
+  </div>
+
+  <div class="two-col">
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      
+      <div class="card">
+        <h4><i class="fa fa-user-cog"></i> Account Security</h4>
+        <div style="margin-top:15px;">
+          <label class="muted">Change Username</label>
+          <input type="text" placeholder="Current: demo_user">
+          
+          <label class="muted" style="display:block; margin-top:10px;">Change Email Address</label>
+          <input type="email" placeholder="user@example.com">
+          
+          <label class="muted" style="display:block; margin-top:10px;">Account Type</label>
+          <select>
+            <option>Administrator</option>
+            <option>Manager (Billing Only)</option>
+            <option>Technician</option>
+          </select>
+
+          <label class="muted" style="display:block; margin-top:10px;">New Password</label>
+          <input type="password" placeholder="Leave blank to keep current">
+          
+          <button class="btn btn-primary" style="margin-top:15px; width:100%">Update Account</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4><i class="fa fa-image"></i> Company Branding</h4>
+        <div style="margin-top:15px; text-align: center; padding: 20px; border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <i class="fa fa-upload" style="font-size: 24px; color: var(--blue)"></i>
+          <p class="muted">Upload Company Logo (PNG/JPG)</p>
+          <input type="file" id="logoUpload" style="display:none" onchange="previewLogo(event)">
+          <button class="btn btn-ghost" onclick="document.getElementById('logoUpload').click()">Choose File</button>
+          <div id="logoPreview" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <aside style="display: flex; flex-direction: column; gap: 20px;">
+      
+      <div class="card">
+        <h4><i class="fa fa-mobile-alt"></i> Customize PPPoE App</h4>
+        <div style="margin-top:10px;">
+          <label class="muted">App Template</label>
+          <select>
+            <option>Modern Dark (Default)</option>
+            <option>Corporate Blue</option>
+            <option>Minimalist White</option>
+          </select>
+          
+          <label class="muted" style="display:block; margin-top:10px;">App Icon (.ico or .png)</label>
+          <input type="file" class="btn-ghost" style="padding: 5px;">
+          
+          <button class="btn btn-accent" style="width:100%; margin-top:15px;">Deploy to App</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4><i class="fa fa-paint-brush"></i> Captive Portal</h4>
+        <div style="margin-top:10px;">
+          <label class="muted">Select Template</label>
+          <div class="small-grid" style="grid-template-columns: 1fr 1fr; gap: 5px;">
+            <div class="card" style="padding:5px; cursor:pointer; border:2px solid var(--blue)">
+              <div style="height:40px; background:#071026; border-radius:4px;"></div>
+              <p style="font-size:10px; text-align:center; margin-top:4px;">Dark Mode</p>
+            </div>
+            <div class="card" style="padding:5px; cursor:pointer;">
+              <div style="height:40px; background:#f4f7fb; border-radius:4px;"></div>
+              <p style="font-size:10px; text-align:center; margin-top:4px;">Light Clean</p>
+            </div>
+          </div>
+
+          <label class="muted" style="display:block; margin-top:15px;">Portal Background Image</label>
+          <input type="file" class="btn-ghost" style="padding: 5px;">
+          
+          <button class="btn btn-primary" style="width:100%; margin-top:15px;">Save & Publish Portal</button>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</section>
+
+
+<div id="modalAddTunnel" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Setup New Remote Tunnel</h3>
+    <div style="margin-top:15px;">
+      <label class="muted">Device Identity</label>
+      <input type="text" placeholder="e.g. Branch-Router-01">
+      
+      <label class="muted" style="display:block; margin-top:10px;">VPN Protocol</label>
+      <select>
+        <option>SSTP (Recommended)</option>
+        <option>L2TP/IPSec</option>
+        <option>WireGuard</option>
+        <option>PPTP</option>
+      </select>
+      
+      <label class="muted" style="display:block; margin-top:10px;">Security Secret (Password)</label>
+      <input type="password" placeholder="••••••••">
+      
+      <div class="checkbox-group" style="margin-top:15px;">
+        <label>
+          <input type="checkbox" checked> Enable Remote DNS
+        </label>
+      </div>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="btn btn-primary" style="flex:1" onclick="alert('Tunnel Configured!')">Initialize Tunnel</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalAddTunnel')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- PPPoE Section-->
+<section id="page-pppoe-plans" class="page">
+  <div class="topbar">
+    <div class="title">PPPoE Service Plans</div>
+    <button class="btn btn-primary" onclick="openModal('modalAddPppoePlan')">
+      <i class="fa fa-plus"></i> New Plan
+    </button>
+  </div>
+
+  <div class="grid-4" id="pppoePlanGrid">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between;">
+        <h4 style="margin:0;">Home Basic</h4>
+        <span class="chip" style="background:var(--blue)">5 Mbps</span>
+      </div>
+      <div class="stat-large" style="margin: 10px 0;">KES 1,500</div>
+      <div class="muted">Local Address: 10.0.0.1</div>
+      <div class="muted">Remote Pool: pppoe-pool</div>
+      <div style="margin-top:15px; display:flex; gap:8px;">
+        <button class="btn btn-ghost" style="flex:1">Edit</button>
+        <button class="btn btn-danger" style="padding:10px;"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="modalAddPppoePlan" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Create PPPoE Plan</h3>
+    <div style="margin-top:15px;">
+      <label class="muted">Plan Name</label>
+      <input type="text" placeholder="e.g. 10Mbps Unlimited">
+      
+      <label class="muted" style="display:block; margin-top:10px;">Bandwidth Limit (Rate Limit)</label>
+      <input type="text" placeholder="e.g. 10M/10M">
+      
+      <label class="muted" style="display:block; margin-top:10px;">Monthly Price (KES)</label>
+      <input type="number" placeholder="2500">
+      
+      <label class="muted" style="display:block; margin-top:10px;">Local Address</label>
+      <input type="text" value="10.0.0.1">
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="btn btn-primary" style="flex:1" onclick="savePppoePlan()">Save Plan</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalAddPppoePlan')">Cancel</button>
+    </div>
+  </div>
+</div>
+<section id="page-pppoe-users" class="page">
+  <div class="topbar">
+    <div class="title">PPPoE Subscribers</div>
+    <div class="top-controls">
+      <button class="btn btn-primary" onclick="openModal('modalAddPppoeUser')">
+        <i class="fa fa-user-plus"></i> Add New User
+      </button>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Plan</th>
+          <th>Remote Address</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pppoeUserTableBody">
+        <tr>
+          <td>customer_001</td>
+          <td>••••••••</td>
+          <td>Home Basic</td>
+          <td>10.0.0.50</td>
+          <td><span class="test-status test-success">Connected</span></td>
+          <td>
+            <button class="btn btn-ghost" onclick="manageUser()"><i class="fa fa-cog"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div id="modalAddPppoeUser" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>New PPPoE User</h3>
+    <div style="margin-top:15px;">
+      <label class="muted">Username</label>
+      <input type="text" placeholder="username">
+      
+      <label class="muted" style="display:block; margin-top:10px;">Password</label>
+      <input type="password" placeholder="password">
+      
+      <label class="muted" style="display:block; margin-top:10px;">Assign Plan</label>
+      <select>
+        <option>Home Basic (5 Mbps)</option>
+        <option>Business (20 Mbps)</option>
+      </select>
+      
+      <label class="muted" style="display:block; margin-top:10px;">Caller ID (Optional - MAC Lock)</label>
+      <input type="text" placeholder="00:00:00:00:00:00">
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="btn btn-primary" style="flex:1" onclick="savePppoeUser()">Create User</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalAddPppoeUser')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- WALLETS PAGE -->
+    <section id="page-wallets" class="page">
+      <div class="topbar">
+        <div class="title">Wallets</div>
+        <button class="btn btn-primary" onclick="openModal('modalCreateWallet')">+ Add Wallet</button>
+      </div>
+      <div class="grid-4" id="walletGrid"></div>
+    </section>
+
+    <!-- PACKAGES PAGE -->
+    <section id="page-packages" class="page">
+      <div class="topbar">
+        <div class="title">Hotspot Packages</div>
+        <button class="btn btn-primary" onclick="openModal('modalAddPackage')">+ New Package</button>
+      </div>
+      <div class="grid-4" id="packageGrid"></div>
+    </section>
+    <section id="page-vouchers" class="page">
+  <div class="topbar">
+    <div class="title">Voucher Management</div>
+    <div class="top-controls">
+      <button class="btn btn-primary" onclick="openModal('modalGenerateVouchers')">
+        <i class="fa fa-plus"></i> Generate Vouchers
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-4" id="voucherStats">
+    <div class="card">
+      <h4>Total Vouchers</h4>
+      <div class="stat-large" id="totalVoucherCount">0</div>
+    </div>
+    <div class="card">
+      <h4>Unused</h4>
+      <div class="stat-large" style="color:var(--green)" id="unusedVoucherCount">0</div>
+    </div>
+  </div>
+
+  <div class="card full-width" style="margin-top: 20px;">
+    <h4>Active & Unused Vouchers</h4>
+    <div class="muted" style="margin-bottom: 15px;">List of codes ready for customers</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Package</th>
+          <th>Created</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="voucherTableBody">
+        </tbody>
+    </table>
+  </div>
+</section>
+<section id="page-hotspot-users" class="page">
+  <div class="topbar">
+    <div class="title">Hotspot User Management</div>
+    <div class="top-controls">
+      <button class="btn btn-primary" onclick="openModal('modalAddHotspotUser')">
+        <i class="fa fa-plus"></i> Add New User
+      </button>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <h4>Active Hotspot Users</h4>
+    <table style="margin-top:15px">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Package/Mode</th>
+          <th>Limit</th>
+          <th>Speed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="hotspotUserTableBody">
+        </tbody>
+    </table>
+  </div>
+</section>
+
+<div id="modalGenerateVouchers" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Bulk Generate Vouchers</h3>
+    <div style="margin-top: 15px;">
+      <label class="muted">Select Package</label>
+      <select id="vouchPackage">
+        <option value="1GB Daily">1GB Daily - KES 50</option>
+        <option value="Unlimited 24H">Unlimited 24H - KES 100</option>
+      </select>
+
+      <label class="muted" style="margin-top: 10px; display: block;">Quantity (Number of vouchers)</label>
+      <input type="number" id="vouchQty" value="10" min="1" max="100">
+
+      <label class="muted" style="margin-top: 10px; display: block;">Prefix (Optional)</label>
+      <input type="text" id="vouchPrefix" placeholder="e.g. DEL-">
+    </div>
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button class="btn btn-primary" style="flex: 1" onclick="generateVoucherLogic()">Generate</button>
+      <button class="btn btn-ghost" style="flex: 1" onclick="closeModal('modalGenerateVouchers')">Cancel</button>
+    </div>
+  </div>
+</div><section id="page-analytics" class="page">
+  <div class="topbar">
+    <div class="title">Network Analytics</div>
+    <div class="top-controls">
+      <button class="btn btn-primary"><i class="fa fa-download"></i> Export Report</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="muted">Peak Traffic</div>
+      <div class="stat-large">4.2 <span class="muted" style="font-size:14px">Gbps</span></div>
+      <div style="color: var(--green); font-size: 12px;"><i class="fa fa-arrow-up"></i> 12% vs last week</div>
+    </div>
+    <div class="card">
+      <div class="muted">Avg Latency</div>
+      <div class="stat-large">14 <span class="muted" style="font-size:14px">ms</span></div>
+      <div style="color: var(--green); font-size: 12px;"><i class="fa fa-check"></i> Stable</div>
+    </div>
+    <div class="card">
+      <div class="muted">Active Sessions</div>
+      <div class="stat-large">1,284</div>
+      <div style="color: var(--orange); font-size: 12px;"><i class="fa fa-users"></i> High Load</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 20px;">
+    <h4 style="margin-top:0">Bandwidth Usage (24h)</h4>
+    <div style="height: 300px; width: 100%;">
+        <canvas id="bandwidthChart"></canvas>
+    </div>
+  </div>
+</section>
+
+
+    <!-- STATIONS PAGE -->
+    <section id="page-stations" class="page">
+      <div class="topbar">
+        <div class="title">Wireless Station
+      </div>
+      <div class="card">
+        <h4>Connected Stations</h4>
+        <div class="muted">Wireless access points and clients</div>
+        <table style="margin-top:10px">
+          <thead>
+            <tr>
+              <th>Station Name</th>
+              <th>IP Address</th>
+              <th>Signal Strength</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stationsList">
+            <tr>
+              <td>Main Router</td>
+              <td>192.168.1.1</td>
+              <td>Excellent</td>
+              <td><span class="test-status test-success">Online</span></td>
+              <td>
+                <button class="btn btn-ghost" onclick="testStation('Main Router')">Test</button>
+                <button class="btn btn-accent" onclick="configureStation('Main Router')">Configure</button>
+              </td>
+            </tr>
+            <tr>
+              <td>AP-01</td>
+              <td>192.168.1.2</td>
+              <td>Good</td>
+              <td><span class="test-status test-success">Online</span></td>
+              <td>
+                <button class="btn btn-ghost" onclick="testStation('AP-01')">Test</button>
+                <button class="btn btn-accent" onclick="configureStation('AP-01')">Configure</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROUTER SETUP PAGE -->
+    <section id="page-router-setup" class="page">
+  <div class="topbar">
+    <div class="title">MikroTik Router Config Generator</div>
+  </div>
+
+  <div class="card" style="max-width: 600px; margin: 0 auto; background: var(--card);">
+    <h2 style="color: var(--blue);">Generate New Router Configuration</h2>
+
+    <label class="muted" style="font-weight: bold; display: block; margin-top: 15px;">Router System Identity *</label>
+    <input type="text" id="routerNameCorrect" placeholder="Main-Router">
+
+    <label class="muted" style="font-weight: bold; display: block; margin-top: 15px;">WiFi Network Name (SSID) *</label>
+    <input type="text" id="ssidCorrect" placeholder="MyWiFi">
+
+    <label class="muted" style="font-weight: bold; display: block; margin-top: 15px;">Bridge Interfaces</label>
+    <div class="checkbox-group" style="margin-top: 10px;">
+      <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+        <input type="checkbox" value="ether2"> Ether2 (LAN Port 1)
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-top: 6px;">
+        <input type="checkbox" value="ether3"> Ether3 (LAN Port 2)
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-top: 6px;">
+        <input type="checkbox" value="ether4"> Ether4 (LAN Port 3)
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-top: 6px;">
+        <input type="checkbox" value="ether5"> Ether5 (LAN Port 4)
+      </label>
+    </div>
+
+    <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="generateMikrotikConfig()">Generate Configuration Script</button>
+
+    <div id="error" class="error" style="color: var(--red); margin-top: 10px;"></div>
+
+    <div id="output" class="script-output" style="display: none; margin-top: 20px;">
+      <pre id="configContent" style="white-space: pre-wrap; margin: 0;"></pre>
+      <button class="btn btn-ghost" style="margin-top: 10px;" onclick="copyConfig()">Copy to Clipboard</button>
+    </div>
+  </div>
+</section>
+<!-- LOGS SECTION -->
+<section id="page-logs" class="page">
+  <div class="topbar">
+    <div class="title">System & Account Logs</div>
+    <div class="top-controls">
+      <button class="btn btn-ghost" onclick="clearLogs()">
+        <i class="fa fa-trash"></i> Clear History
+      </button>
+      <button class="btn btn-primary" onclick="exportLogs()">
+        <i class="fa fa-download"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="filters" style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:200px;">
+        <label class="muted">Search Activity</label>
+        <input type="text" id="logSearch" placeholder="Search by user or action..." onkeyup="filterLogs()">
+      </div>
+      <div style="width:180px;">
+        <label class="muted">Category</label>
+        <input type="text" id="logSearch" placeholder="Search..." onkeyup="filterLogs()">
+
+<select id="logCategory" onchange="filterLogs()">
+  <option value="all">All Activities</option>
+  <option value="account">Account</option>
+  <option value="security">Security</option>
+  <option value="system">System</option>
+</select>
+
+<button class="btn btn-ghost" onclick="clearLogs()">Clear History</button>
+<button class="btn btn-primary" onclick="exportLogs()">Export CSV</button>
+
+
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>User</th>
+          <th>Category</th>
+          <th>Action / Change Description</th>
+          <th>IP Address</th>
+        </tr>
+      </thead>
+      <tbody id="logsTableBody">
+        <tr>
+          <td class="muted">2023-10-27 14:22</td>
+          <td><strong>admin_demo</strong></td>
+          <td><span class="chip" style="background:rgba(0, 82, 204, 0.2)">Account</span></td>
+          <td>Changed user <span class="muted">cust_001</span> plan to 10Mbps</td>
+          <td class="muted">192.168.100.45</td>
+        </tr>
+        <tr>
+          <td class="muted">2023-10-27 12:05</td>
+          <td><strong>System</strong></td>
+          <td><span class="chip" style="background:rgba(217, 83, 79, 0.2)">Security</span></td>
+          <td>Password change successful for <span class="muted">tech_02</span></td>
+          <td class="muted">10.20.0.1</td>
+        </tr>
+        <tr>
+          <td class="muted">2023-10-26 09:45</td>
+          <td><strong>admin_demo</strong></td>
+          <td><span class="chip" style="background:rgba(43, 214, 123, 0.2)">System</span></td>
+          <td>New MikroTik Station added: "Station_North_Hub"</td>
+          <td class="muted">192.168.100.45</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<div id="logout-overlay" class="modal-overlay" style="display:none; flex-direction: column; gap: 20px;">
+  <div class="loader"></div> <div style="text-align: center;">
+    <h3 style="margin: 0;">Logging out...</h3>
+    <p class="muted">Securing your session and clearing cache.</p>
+  </div>
+</div>
+  </main>
+
+  <!-- MODALS -->
+  <div id="modalPayInvoice" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Settle Monthly Invoice</h3>
+    <div class="card" style="background:rgba(0,0,0,0.2); margin-bottom:15px;">
+      <div class="muted">Monthly Income: <span id="popIncome">KES 105,000</span></div>
+      <div style="font-size:20px; font-weight:800; color:var(--orange);">
+        Due: KES <span id="popInvoiceAmount">15,750</span>
+      </div>
+    </div>
+    
+    <label class="muted">M-Pesa Number</label>
+    <input type="text" id="mpesaPhone" placeholder="2547XXXXXXXX">
+    
+    <button class="btn btn-topup" style="width:100%; margin-top:15px;" onclick="triggerMpesaPush()">
+      Pay via M-Pesa
+    </button>
+  </div>
+</div>
+
+ <div id="modalTopUp" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Account Top Up</h3>
+    
+    <label class="muted">Select Wallet Name</label>
+    <select id="walletSelector">
+      <option value="main_mpesa">Main M-Pesa Wallet</option>
+      <option value="business_till">Business Till Wallet</option>
+      <option value="float_acc">System Float Account</option>
+    </select>
+
+    <label class="muted" style="display:block; margin-top:10px;">M-Pesa Number (for STK Push)</label>
+    <input type="text" id="topupPhone" placeholder="2547XXXXXXXX" required>
+    
+    <label class="muted" style="display:block; margin-top:10px;">Amount (KES)</label>
+    <input type="number" id="topupAmount" placeholder="Enter amount" required>
+    
+    <button class="btn btn-topup" style="width:100%; margin-top:15px;" onclick="processTopUp()">
+      Confirm Payment
+    </button>
+  </div>
+</div>
+
+  <div id="modalHotspot" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Manage Hotspot</h3>
+      <p class="muted">Active sessions and actions.</p>
+      <button class="btn btn-ghost" onclick="closeModal('modalHotspot')">Close</button>
+    </div>
+  </div>
+
+  <div id="modalAddPppoe" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Add PPPoE User</h3>
+      <label class="muted">Username</label>
+      <input id="newPppUser" placeholder="Enter username">
+      <label class="muted">Plan</label>
+      <select id="newPppPlan">
+        <option>Plan A</option>
+        <option>Plan B</option>
+      </select>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="addPppoeUser()">Create</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalAddPppoe')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalManagePppoe" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Manage PPPoE</h3>
+      <p id="managePppName" class="muted"></p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="togglePppStatus()">Toggle Suspend</button>
+        <button class="btn btn-danger" onclick="confirmDeletePpp()">Delete</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalManagePppoe')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalBulkSms" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Send Bulk SMS</h3>
+      <label class="muted">Message</label>
+      <textarea id="smsText" placeholder="Enter your message..."></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-accent" onclick="sendBulkSMS()">Send</button>
+        <button class="btn btn-ghost" onclick="closeModal('modalBulkSms')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalTransactions" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Transactions</h3>
+      <table style="margin-top:10px">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>8:04</td>
+            <td>PHX0Z</td>
+            <td>Ksh 20</td>
+            <td>Completed</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="closeModal('modalTransactions')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalWallet" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3>Wallet History</h3>
+      <table style="margin-top:8px">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-11-01</td>
+            <td>Ksh 10,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:8px">
+        <button class="btn btn-ghost" onclick="closeModal('modalWallet')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalCreateWallet" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Create New Wallet</h3>
+        <button class="btn-ghost" onclick="closeModal('modalCreateWallet')">&times;</button>
+      </div>
+
+      <div style="margin-top:15px;">
+        <label class="muted">Wallet Name</label>
+        <input type="text" id="wName" placeholder="e.g. Main Paybill">
+
+        <label class="muted" style="margin-top:10px; display:block;">Wallet Type</label>
+        <select id="wType" onchange="toggleWalletFields()">
+          <option value="Paybill">M-Pesa Paybill</option>
+          <option value="BuyGoods">M-Pesa Till</option>
+          <option value="Bank">Bank Account</option>
+        </select>
+
+        <div id="dynamicFields" style="margin-top:15px;">
+          <label class="muted">Shortcode / Paybill No</label>
+          <input type="number" id="wShortcode" placeholder="Enter number">
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitNewWallet()">Save Wallet</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="closeModal('modalCreateWallet')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddPackage" class="modal-overlay" style="display:none;">
+    <div class="modal" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+      <h3>Advanced Hotspot Package</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+        <div>
+          <label class="muted">Plan Name</label>
+          <input type="text" id="pName" placeholder="e.g. 1GB Daily">
+        </div>
+        <div>
+          <label class="muted">Price (KES)</label>
+          <input type="number" id="pPrice" placeholder="50">
+        </div>
+
+        <div>
+          <label class="muted">Expiry Mode</label>
+          <select id="pExpiryMode" onchange="toggleExpiryFields()">
+            <option value="Data">Data Limit (MB/GB)</option>
+            <option value="Fixed">Fixed Time (Usage Based)</option>
+            <option value="FirstLogin">Fixed Time (Countdown)</option>
+          </select>
+        </div>
+        <div id="expiryValueContainer">
+          <label class="muted">Data Limit / Duration</label>
+          <input type="text" id="pExpiryValue" placeholder="1GB or 24H">
+        </div>
+
+        <div>
+          <label class="muted">Speed (Mbps)</label>
+          <input type="number" id="pSpeed" placeholder="5">
+        </div>
+        <div>
+          <label class="muted">Devices per Voucher</label>
+          <input type="number" id="pDevices" value="1">
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label class="muted">Availability</label>
+          <select id="pScope">
+            <option value="Universal">Universal (All Stations)</option>
+            <option value="Specific">Specific Router Only</option>
+          </select>
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label class="muted">Show on Days:</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px;">
+            <label><input type="checkbox" class="pDay" value="Mon"> Mon</label>
+            <label><input type="checkbox" class="pDay" value="Tue"> Tue</label>
+            <label><input type="checkbox" class="pDay" value="Wed"> Wed</label>
+            <label><input type="checkbox" class="pDay" value="Thu"> Thu</label>
+            <label><input type="checkbox" class="pDay" value="Fri"> Fri</label>
+            <label><input type="checkbox" class="pDay" value="Sat"> Sat</label>
+            <label><input type="checkbox" class="pDay" value="Sun"> Sun</label>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: 1" onclick="submitNewPackage()">Create Package</button>
+        <button class="btn btn-ghost" style="flex: 1" onclick="closeModal('modalAddPackage')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="modalAddHotspotUser" class="modal-overlay" style="display:none;">
+  <div class="modal" style="max-width: 550px;">
+    <h3>Create Hotspot User</h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+      <div>
+        <label class="muted">Username *</label>
+        <input type="text" id="hsUser" placeholder="e.g. customer01">
+      </div>
+      <div>
+        <label class="muted">Password *</label>
+        <input type="password" id="hsPass" placeholder="****">
+      </div>
+
+      <div style="grid-column: span 2;">
+        <label class="muted">Configuration Method</label>
+        <select id="hsMethod" onchange="toggleHsManualFields()">
+          <option value="package">Use Existing Package</option>
+          <option value="manual">Manual Configuration</option>
+        </select>
+      </div>
+
+      <div id="hsPackageDiv" style="grid-column: span 2;">
+        <label class="muted">Select Package</label>
+        <select id="hsSelectedPackage">
+          <option value="1GB Daily">1GB Daily - KES 50</option>
+          <option value="Unlimited 24H">Unlimited 24H - KES 100</option>
+        </select>
+      </div>
+
+      <div id="hsManualFields" style="grid-column: span 2; display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
+          <label class="muted">Expiration Mode</label>
+          <select id="hsManualMode">
+            <option value="Data">Data Limit (MB/GB)</option>
+            <option value="Fixed">Fixed Time (Usage)</option>
+            <option value="Countdown">Countdown (From Login)</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Limit Value</label>
+          <input type="text" id="hsManualLimit" placeholder="e.g. 500MB or 2H">
+        </div>
+        <div style="grid-column: span 2;">
+          <label class="muted">Speed Limit (Mbps)</label>
+          <input type="number" id="hsManualSpeed" placeholder="5">
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button class="btn btn-primary" style="flex: 1" onclick="submitHotspotUser()">Create User</button>
+      <button class="btn btn-ghost" style="flex: 1" onclick="closeModal('modalAddHotspotUser')">Cancel</button>
+    </div>
+  </div>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <div id="modalTopUp" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center;">
+      <div class="modal" style="background:var(--card); padding:20px; border-radius:8px; width:90%; max-width:400px;">
+        <h3>Top Up Account</h3>
+        <p>Enter the amount to add to your balance.</p>
+        <input type="number" placeholder="Enter Amount" style="width:100%; padding:10px; margin:10px 0;">
+        <div style="display:flex; gap:10px;">
+            <button class="btn btn-primary" onclick="closeModal('modalTopUp')">Confirm</button>
+            <button class="btn btn-ghost" onclick="closeModal('modalTopUp')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalHotspot" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center;">
+      <div class="modal" style="background:var(--card); padding:20px; border-radius:8px; width:90%; max-width:400px;">
+        <h3>Manage Hotspot</h3>
+        <p>Configure your hotspot settings below.</p>
+        <button class="btn btn-ghost" onclick="closeModal('modalHotspot')">Close</button>
+      </div>
+    </div>
+    <script src="/script.js"></script>
+</body>
+</html>    
+
+
+
+

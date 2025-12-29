@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-TECH Billing System</title>
+    <style>
+        /* --- GLOBAL & SHARED STYLES --- */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hidden { display: none !important; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: #0052cc;
+            padding: 15px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-buttons .nav-btn {
+            padding: 10px 18px;
+            background: white;
+            color: #0052cc;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            margin-left: 15px;
+            font-weight: bold;
+            border: 2px solid #0052cc;
+            cursor: pointer;
+        }
+
+        .nav-buttons .highlight {
+            background: #ff7f00;
+            color: white;
+            border: none;
+        }
+
+        /* --- VIEWS CONTAINER --- */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .container-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* --- PASSWORD TOGGLE STYLING --- */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 12px;
+            color: #0052cc;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* --- LOGIN PAGE BACKGROUND --- */
+        .login-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #login-view {
+            background: url('images/login-bg.jpeg') center/cover no-repeat;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #ff7f00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-blue { background: #0057D9; }
+        .btn-blue:hover { background: #003c98; }
+
+        .header-banner {
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(90deg, #0057D9, #FF3B3F);
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        a { color: #ff7f00; text-decoration: none; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+<a href="index.html"></a>
+
+    <nav id="main-nav">
+        <div class="logo">D-TECH Billing System</div>
+        <div class="nav-buttons">
+            <a onclick="showView('login')" class="nav-btn">Login</a>
+            <a onclick="showView('signup')" class="nav-btn highlight">Sign up</a>
+        </div>
+    </nav>
+
+    <main>
+        <section id="login-view" class="view">
+    <div class="login-bg">
+        <div class="container-box">
+            <h2 style="color:#FF3B3F">Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <input type="text" id="login-email" name="email" placeholder="Email address" value="demo" required>
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="login-pass" placeholder="Password" value="demo123" required>
+                    <span class="toggle-password" onclick="togglePassword('login-pass', this)">SHOW</span>
+                </div>
+                <button class="btn-primary btn-blue" type="submit">Login</button>
+            </form>
+            <div style="margin-top:15px;">
+                <a onclick="showView('forgot')">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section id="signup-view" class="view hidden">
+            <div class="container-box" style="padding: 0; overflow: hidden;">
+                <div class="header-banner">Create Your ISP Account</div>
+                <div style="padding: 25px;">
+                    <form onsubmit="event.preventDefault(); alert('Account Created!');">
+                        <input type="text" name="username" placeholder="Username" required>
+                        <input type="email" name="email" placeholder="Email address" required>
+                        <input type="text" name="names" placeholder="Full Names" required>
+                        <input type="text" name="company" placeholder="Company Name" required>
+                        <div class="password-wrapper">
+                            <input type="password" name="password" id="signup-pass" placeholder="Password" required>
+                            <span class="toggle-password" onclick="togglePassword('signup-pass', this)">SHOW</span>
+                        </div>
+                        <button class="btn-primary" type="submit">Create Account</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="forgot-view" class="view hidden">
+            <div class="container-box">
+                <h2 style="color: #0052cc;">Forgot Password</h2>
+                <p style="color: #555; font-size: 14px;">Enter your registered email address. We will send a link to reset your password.</p>
+                <form onsubmit="event.preventDefault(); showView('reset-sent');">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <button class="btn-primary" type="submit">Send Reset Link</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="reset-sent-view" class="view hidden">
+            <div class="container-box">
+                <h2 style="color: #0052cc;">Reset Link Sent!</h2>
+                <p style="font-size: 18px; color: #555;">A password reset link has been sent to your email. Please check your inbox.</p>
+                <a onclick="showView('login')" class="btn-primary" style="display:inline-block; width: auto; color: white;">Go to Login</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2025 D-TECH Billing System – All Rights Reserved
+    </footer>
+
+    <script>
+        // Toggle view function
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.add('hidden');
+            });
+            const activeView = document.getElementById(viewId + '-view');
+            if (activeView) activeView.classList.remove('hidden');
+
+            const nav = document.getElementById('main-nav');
+            if (viewId === 'reset-sent') {
+                nav.classList.add('hidden');
+            } else {
+                nav.classList.remove('hidden');
+            }
+        }
+
+        // Toggle Password Visibility function
+        function togglePassword(inputId, toggleText) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                toggleText.textContent = "HIDE";
+            } else {
+                input.type = "password";
+                toggleText.textContent = "SHOW";
+            }
+        }
+        function handleLogin(event) {
+    event.preventDefault(); // Prevents the form from reloading the page
+
+    const user = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+
+    // 1. Check for Demo Account
+    if (user === "demo" && pass === "demo123") {
+        // Loads index.html as a separate page (not SPA)
+        window.location.href = "main.html"; 
+    } 
+    // 2. Logic for "Other Accounts"
+    else if (user !== "" && pass !== "") {
+        // Here you would normally validate against a database.
+        // For now, we will allow other accounts to "log in" via an alert.
+        alert("Logging in as " + user + "...");
+        
+        // If you want other accounts to also see index.html, 
+        // you can uncomment the line below:
+        // window.location.href = "main.html";
+    } else {
+        alert("Please enter your credentials.");
+    }
+}
+    </script>
+</body>
+</html>
